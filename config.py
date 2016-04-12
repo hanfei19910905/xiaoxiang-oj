@@ -18,7 +18,7 @@ class DevConfig(Config):
                 'name': 'xiaoxiang_oj',
                 'engine': 'peewee.MySQLDatabase',
                 'user' : 'root',
-                'password' : '123456',
+                'password' : 'qhp186267165',
                 'host' : '127.0.0.1'
             }
 
