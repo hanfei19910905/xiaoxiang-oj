@@ -21,7 +21,11 @@
                 <li><a href="/clist">Contests</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li><a href="/index">{{ current_user.name }}</a></li>
+                {% else %}
                 <li><a href="/login">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
