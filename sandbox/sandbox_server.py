@@ -1,7 +1,8 @@
 import pika
 import time
-from app.models import Submission, User
-from.utils import decode
+from app.models import Submission, Problem
+from .utils import decode
+from .sandbox_executor import SandBoxExecutor
 
 
 class SandBoxService(object):
@@ -17,13 +18,14 @@ class SandBoxService(object):
 
         def callback(ch, method, properties, body):
             ch.basic_ack(delivery_tag = method.delivery_tag)
-            submit_id , user_id, time_limit, mem_limit, source = decode(body)
+            submit_id , prob_id, time_limit, mem_limit, source = decode(body)
             if submit_id is None:
                 print("Fail!!!!")
                 return
-            time.sleep(3)
+            prob = Problem.select().where(Problem.id == prob_id).get()
+            ret = SandBoxExecutor.execute(submit_id, time_limit, mem_limit, source, prob.input, prob.output)
             submit = Submission.select().where(Submission.id==submit_id).get()
-            submit.status = 1
+            submit.status = ret
             submit.save()
 
         channel.basic_qos(prefetch_count=1)

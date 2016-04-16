@@ -25,7 +25,7 @@ def submit(cid, pid):
         time_limit = problem.time_limit
         mem_limit = problem.mem_limit
         submit = Submission.create(prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
-        sandbox_client.call(submit.get_id(), current_user.get_id(), time_limit, mem_limit, form.source.data)
+        sandbox_client.call(submit.get_id(), problem_id, time_limit, mem_limit, form.source.data)
         return redirect(url_for("prob.status"))
     else:
         print("not valid!")
