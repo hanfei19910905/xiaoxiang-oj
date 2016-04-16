@@ -1,35 +1,33 @@
 import pika
+import time
+from app.models import Submission, User
+from.utils import decode
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
 
-channel = connection.channel()
+class SandBoxService(object):
 
-channel.queue_declare(queue='rpc_queue')
+    @staticmethod
+    def run(ch):
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+                host='localhost'))
+        channel = connection.channel()
 
-def fib(n):
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fib(n-1) + fib(n-2)
+        channel.queue_declare(queue=ch, durable=True)
+        print(' [*] Waiting for messages. To exit press CTRL+C')
 
-def on_request(ch, method, props, body):
-    n = int(body)
+        def callback(ch, method, properties, body):
+            ch.basic_ack(delivery_tag = method.delivery_tag)
+            submit_id , user_id, time_limit, mem_limit, source = decode(body)
+            if submit_id is None:
+                print("Fail!!!!")
+                return
+            time.sleep(3)
+            submit = Submission.select().where(Submission.id==submit_id).get()
+            submit.status = 1
+            submit.save()
 
-    print(" [.] fib(%s)" % n)
-    response = fib(n)
+        channel.basic_qos(prefetch_count=1)
+        channel.basic_consume(callback,
+                              queue=ch)
 
-    ch.basic_publish(exchange='',
-                     routing_key=props.reply_to,
-                     properties=pika.BasicProperties(correlation_id = \
-                                                         props.correlation_id),
-                     body=str(response))
-    ch.basic_ack(delivery_tag = method.delivery_tag)
-
-channel.basic_qos(prefetch_count=1)
-channel.basic_consume(on_request, queue='rpc_queue')
-
-print(" [x] Awaiting RPC requests")
-channel.start_consuming()
+        channel.start_consuming()

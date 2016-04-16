@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from flask import render_template, redirect, request, url_for, flash
-from . import prob
+from . import prob, sandbox_client
 from .forms import SubmitForm
 from ..models import Problem, Submission
 from flask_login import login_required, current_user
@@ -24,7 +24,15 @@ def submit(cid, pid):
         problem_id = problem.id
         time_limit = problem.time_limit
         mem_limit = problem.mem_limit
-        Submission.create(prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now())
+        submit = Submission.create(prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
+        sandbox_client.call(submit.get_id(), current_user.get_id(), time_limit, mem_limit, form.source.data)
+        return redirect(url_for("prob.status"))
     else:
         print("not valid!")
     return render_template('submit.html', problem=problem, form = form)
+
+@prob.route('/status')
+@login_required
+def status():
+    submission_set = Submission.select().where(Submission.user == current_user.get_id())
+    return render_template("status.html", slist = submission_set)

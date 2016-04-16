@@ -5,4 +5,4 @@ from wtforms.validators import DataRequired, Length
 
 class SubmitForm(Form):
     source = TextAreaField('Source', validators=[DataRequired()])
-    submit = SubmitField('Log In')
+    submit = SubmitField('Submit')
