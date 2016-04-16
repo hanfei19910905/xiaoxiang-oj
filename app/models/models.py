@@ -26,7 +26,7 @@ class Judge_way(db.Model):
 
 class Problem(db.Model):
     id = PrimaryKeyField()
-    contest_id = ForeignKeyField(Contest)
+    contest = ForeignKeyField(Contest)
     name = CharField()
     show_id = CharField()
     description = TextField()
@@ -34,12 +34,14 @@ class Problem(db.Model):
     mem_limit = IntegerField()
     input = TextField()
     output = TextField()
-    judge_id = ForeignKeyField(Judge_way)
+    sample_input = TextField()
+    sample_output = TextField()
+    judge = ForeignKeyField(Judge_way)
 
 class Submission(db.Model):
     id = PrimaryKeyField()
-    user_id = ForeignKeyField(User)
-    prob_id = ForeignKeyField(Problem)
+    user = ForeignKeyField(User, index=True)
+    prob = ForeignKeyField(Problem)
     status = IntegerField()
-    source = CharField()
+    source = TextField()
     time = DateTimeField()

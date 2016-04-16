@@ -2,14 +2,14 @@
 {% block page_content %}
 <div class="page-header">
     <div class="container">
-        <h3>1000. A + B Problem</h3>
+        <h3>{{ problem.show_id }}.{{ problem.name }}</h3>
     </div>
     <div class="container">
         <div class="col-lg-6">
             <table>
                 <tr>
                     <td><strong>Time Limit: </strong></td>
-                    <td>1ms</td>
+                    <td>{{ problem.time_limit }}s</td>
                 </tr>
                 <tr>
                     <td><strong>Total Submissions: </strong></td>
@@ -21,7 +21,7 @@
             <table>
                 <tr>
                     <td><strong>Memory Limit: </strong></td>
-                    <td>32M</td>
+                    <td>{{ problem.mem_limit }}MB</td>
                 </tr>
                 <tr>
                     <td><strong>Accepted: </strong></td>
@@ -36,18 +36,18 @@
         <div class="row">
             <div class="col-sm-8">
                     <p class="lead">Description</p>
-                    <div class="well">Calculate a+b</div>
+                    <div class="well">{{ problem.description }}</div>
                     <p class="lead">Input</p>
-                    <div class="well">Two integer a,b (0<=a,b<=10)</div>
+                    <div class="well">{{ problem.input }}</div>
                     <p class="lead">Output</p>
-                    <div class="well">Output a+b</div>
+                    <div class="well">{{ problem.output }}</div>
                     <p class="lead">Sample Input</p>
-                    <pre>1 2</pre>
+                    <pre>{{ problem.sample_input }}</pre>
                     <p class="lead">Sample Output</p>
-                    <pre>3</pre>
+                    <pre>{{ problem.sample_output }}</pre>
             </div>
             <div class="col-sm-4">
-                <a class="btn btn-default" href="#">Submit</a>
+                <a class="btn btn-default" href="{{ url_for('prob.submit', cid=problem.contest.id, pid=problem.show_id) }}">Submit</a>
             </div>
         </div>
     </div>
