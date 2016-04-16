@@ -1,12 +1,13 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required
 from . import main
-from .forms import LoginFrom
+from .forms import LoginForm
 from ..models import User
+
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginFrom()
+    form = LoginForm()
     if form.validate_on_submit():
         user = User.select().where(User.email == form.email.data).get()
         if user is not None and user.verify_password(form.password.data):
@@ -15,9 +16,11 @@ def login():
         flash('Invalid username or password.')
     return render_template('login.html', form=form)
 
+
 @main.route('/index')
 def index():
     return render_template('index.html')
+
 
 @main.route('/')
 def index1():
