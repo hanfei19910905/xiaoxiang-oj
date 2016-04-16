@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="page-header">
+    <center><h2>{{ contest.contest_name }}</h2></center>
+</div>
+<div class="page-content">
+    {% if plist %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>Problem ID</td>
+                <td>Problem Name</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for problem in plist %}
+            <tr>
+                <td>{{ problem.show_id }}</td>
+                <td><a href="{{ url_for('prob.prob_view', cid=contest.id, pid=problem.show_id) }}">{{ problem.name }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>Not have Problem</h4>
+    {% endif %}
+</div>
+{% endblock %}

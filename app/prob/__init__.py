@@ -3,6 +3,6 @@
 
 from flask import Blueprint
 
-prob = Blueprint('prob', __name__)
+prob = Blueprint('prob', __name__, template_folder="../templates")
 
 from . import views

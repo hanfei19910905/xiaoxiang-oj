@@ -34,12 +34,14 @@ class Problem(db.Model):
     mem_limit = IntegerField()
     input = TextField()
     output = TextField()
-    judge_id = ForeignKeyField(Judge_way)
+    sample_input = TextField()
+    sample_output = TextField()
+    judge = ForeignKeyField(Judge_way)
 
 class Submission(db.Model):
     id = PrimaryKeyField()
     user = ForeignKeyField(User, index=True)
     prob = ForeignKeyField(Problem)
     status = IntegerField()
-    source = CharField()
+    source = TextField()
     time = DateTimeField()

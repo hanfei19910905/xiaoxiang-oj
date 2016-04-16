@@ -3,7 +3,9 @@
 
 from flask import render_template, redirect, request, url_for, flash
 from . import contest
+from ..prob import prob
 from ..models import Contest
+from ..models import Problem
 
 @contest.route('/clist')
 def clist_view():
@@ -16,4 +18,10 @@ def clist_view():
 
 @contest.route('/cview/<cid>')
 def contest_view(cid):
-    return render_template('contest_view.html')
+    plist = None
+    contest = Contest.select().where(Contest.id==cid).get()
+    try:
+        plist = Problem.select().where(Problem.contest == cid)
+    except ProblemDoesNotExist:
+        pass
+    return render_template('contest_view.html', plist=plist, contest=contest)
