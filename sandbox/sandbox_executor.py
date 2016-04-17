@@ -6,6 +6,8 @@ class SandBoxExecutor(object):
     @staticmethod
     def compare(user_output, std_output):
         print("output", user_output, std_output)
+        user_output = ''.join(user_output.split('\n'))
+        std_output = ''.join(std_output.split('\n'))
         return user_output == std_output
 
     @staticmethod

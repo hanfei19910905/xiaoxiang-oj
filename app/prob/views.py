@@ -8,11 +8,13 @@ from ..models import Problem, Submission
 from flask_login import login_required, current_user
 import datetime
 
+
 @prob.route('/cview/<cid>/prob/<pid>')
 @login_required
 def prob_view(cid, pid):
     problem = Problem.select().where(Problem.contest==cid, Problem.show_id==pid).get()
     return render_template('prob_view.html', problem=problem)
+
 
 @prob.route('/cview/<cid>/prob/<pid>/submit', methods=['GET', 'POST'])
 @login_required
@@ -31,8 +33,9 @@ def submit(cid, pid):
         print("not valid!")
     return render_template('submit.html', problem=problem, form = form)
 
+
 @prob.route('/status')
 @login_required
 def status():
-    submission_set = Submission.select().where(Submission.user == current_user.get_id())
+    submission_set = Submission.select().where(Submission.user == current_user.get_id()).order_by(Submission.id.desc())
     return render_template("status.html", slist = submission_set)

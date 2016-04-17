@@ -9,18 +9,18 @@
         <thead>
             <tr>
                 <td>Submit ID</td>
-                <td>User ID</td>
+                <td>User Name</td>
                 <td>Prob ID</td>
-                <td>time</td>
-                <td>status</td>
+                <td>Time</td>
+                <td>Status</td>
             </tr>
         </thead>
         <tbody>
             {% for submit in slist %}
             <tr>
                 <td>{{ submit.id }}</td>
-                <td>{{ submit.user.id }}</td>
-                <td>{{ submit.prob.id }}</td>
+                <td>{{ submit.user.name }}</td>
+                <td>{{ submit.prob.show_id }}</td>
                 <td>{{ submit.time }}</td>
                 <td>{{ submit.status }}</td>>
             </tr>
