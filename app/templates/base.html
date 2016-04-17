@@ -21,11 +21,12 @@
                 <li><a href="/clist">Contests</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated %}
-                <li><a href="/index">{{ current_user.name }}</a></li>
-                {% else %}
-                <li><a href="/login">Login</a></li>
-                {% endif %}
+            {% if current_user.is_authenticated %}
+            <li><a href="#">{{ current_user.name }}</a></li>
+            <li><a href="{{ url_for('main.logout') }}">Sign Out</a></li>
+            {% else %}
+            <li><a href="{{ url_for('main.login') }}">Sign In</a></li>
+            {% endif %}
             </ul>
         </div>
     </div>

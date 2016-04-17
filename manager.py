@@ -2,6 +2,7 @@ import os
 from app import app
 from app import models
 from flask_script import Manager
+from sandbox import SandBoxService
 
 manager = Manager(app)
 
@@ -19,6 +20,11 @@ def init_db():
         m.Problem.create_table()
     if not m.Submission.table_exists():
         m.Submission.create_table()
+
+@manager.command
+def sandbox_service(ch):
+    print("Arg ch",ch)
+    SandBoxService.run(ch)
 
 if __name__ == '__main__':
     manager.run()

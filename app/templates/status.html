@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="page-header">
+    <center><h2>Status</h2></center>
+</div>
+<div class="page-content">
+    {% if slist %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>Submit ID</td>
+                <td>User Name</td>
+                <td>Prob ID</td>
+                <td>Time</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submit in slist %}
+            <tr>
+                <td>{{ submit.id }}</td>
+                <td>{{ submit.user.name }}</td>
+                <td>{{ submit.prob.show_id }}</td>
+                <td>{{ submit.time }}</td>
+                <td>{{ submit.status }}</td>>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4>you don't have submissions</h4>
+    {% endif %}
+</div>
+{% endblock %}
