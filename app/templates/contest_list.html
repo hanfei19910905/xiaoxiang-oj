@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="page-header">
+    <div class="container">
+        <h2>Contest List</h2>
+    </div>
+</div>
+<div class="page-content">
+    <div class="container">
+        {% if clist %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Contest ID</td>
+                    <td>Contest Name</td>
+                    <td>Begin Time</td>
+                    <td>End Time</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contest in clist %}
+                <tr>
+                    <td>{{ contest.id }}</td>
+                    <td><a href="{{ url_for('contest.contest_view', cid=contest.id) }}">{{ contest.contest_name }}</a></td>
+                    <td>{{ contest.begin_time }}</td>
+                    <td>{{ contest.end_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h4>Not has contest!</h4>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -21,3 +21,6 @@ login_manager.init_app(app)
 
 from .prob import prob as prob_blueprint
 app.register_blueprint(prob_blueprint)
+
+from .contest import contest as contest_blueprint
+app.register_blueprint(contest_blueprint)
