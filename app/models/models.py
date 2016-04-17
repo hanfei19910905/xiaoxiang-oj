@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from hashlib import md5
 from werkzeug.security import check_password_hash
 
+
 class User(UserMixin, db.Model):
     id = PrimaryKeyField()
     email = CharField(unique=True)
@@ -14,15 +15,18 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return self.password == password
 
+
 class Contest(db.Model):
     id = PrimaryKeyField()
     contest_name = CharField()
     begin_time = DateTimeField()
     end_time = DateTimeField()
 
+
 class Judge_way(db.Model):
     id = PrimaryKeyField()
     judge_code = CharField()
+
 
 class Problem(db.Model):
     id = PrimaryKeyField()
@@ -37,6 +41,7 @@ class Problem(db.Model):
     sample_input = TextField()
     sample_output = TextField()
     judge = ForeignKeyField(Judge_way)
+
 
 class Submission(db.Model):
     id = PrimaryKeyField()
