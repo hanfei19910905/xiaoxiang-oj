@@ -26,7 +26,7 @@ def submit(cid, pid):
         problem_id = problem.id
         time_limit = problem.time_limit
         mem_limit = problem.mem_limit
-        submit = Submission.create(prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
+        submit = Submission.create(contest = problem.contest, prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
         sandbox_client.call(submit.get_id(), problem_id, time_limit, mem_limit, form.source.data)
         return redirect(url_for("prob.status"))
     else:
@@ -38,4 +38,10 @@ def submit(cid, pid):
 @login_required
 def status():
     submission_set = Submission.select().where(Submission.user == current_user.get_id()).order_by(Submission.id.desc())
-    return render_template("status.html", slist = submission_set)
+    return render_template("status.html", slist = submission_set, cuid = int(current_user.get_id()))
+
+@prob.route('/status/<sid>/code')
+@login_required
+def code_view(sid):
+    submission = Submission.select().where(Submission.id == sid).get()
+    return render_template("code_view.html", submit=submission)
