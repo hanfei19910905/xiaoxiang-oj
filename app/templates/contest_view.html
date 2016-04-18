@@ -2,6 +2,11 @@
 {% block page_content %}
 <div class="page-header">
     <center><h2>{{ contest.contest_name }}</h2></center>
+    <div class="container">
+        <a href="{{ url_for('contest.contest_view', cid=contest.id) }}" class="btn btn-default">Problem</a>
+        <a href="{{ url_for('contest.status', cid=contest.id) }}" class="btn btn-default">Status</a>
+        <a href="{{ url_for('contest.rank_view', cid=contest.id) }}" class="btn btn-default">Ranklist</a>
+    </div>
 </div>
 <div class="page-content">
     {% if plist %}
@@ -21,6 +26,7 @@
             {% endfor %}
         </tbody>
     </table>
+
     {% else %}
     <h4>Not have Problem</h4>
     {% endif %}

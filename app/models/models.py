@@ -47,6 +47,7 @@ class Submission(db.Model):
     id = PrimaryKeyField()
     user = ForeignKeyField(User, index=True)
     prob = ForeignKeyField(Problem)
+    contest = ForeignKeyField(Contest)
     status = IntegerField()
     source = TextField()
     time = DateTimeField()
