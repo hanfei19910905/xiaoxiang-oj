@@ -17,9 +17,12 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-                <li><a href="/clist">Contests</a></li>
-                <li><a href="/status">Status</a></li>
+                <li><a href="/index">首页</a></li>
+                <li><a href="/homework/list">作业</a></li>
+                <li><a href="/problem_set">题库</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/status">我的提交</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}

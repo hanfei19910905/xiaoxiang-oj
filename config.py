@@ -19,7 +19,8 @@ class DevConfig(Config):
                 'engine': 'peewee.MySQLDatabase',
                 'user' : 'root',
                 'password' : '123456',
-                'host' : '127.0.0.1'
+                'host' : '127.0.0.1',
+                'charset' : 'utf8',
             }
 
 config = {

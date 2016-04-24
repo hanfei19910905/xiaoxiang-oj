@@ -11,13 +11,22 @@ def init_db():
     "Initial Database"
     m = models.models
     if not m.User.table_exists():
+        print("Table user has been created!")
         m.User.create_table()
-    if not m.Contest.table_exists():
-        m.Contest.create_table()
-    if not m.Judge_way.table_exists():
-        m.Judge_way.create_table()
+    if not m.Data.table_exists():
+        m.Data.create_table()
+    if not m.TrainCamp.table_exists():
+        m.TrainCamp.create_table()
+    if not m.HomeWork.table_exists():
+        m.HomeWork.create_table()
+    if not m.JudgeNorm.table_exists():
+        m.JudgeNorm.create_table()
     if not m.Problem.table_exists():
         m.Problem.create_table()
+    if not m.HomeWorkProbRelationShip.table_exists():
+        m.HomeWorkProbRelationShip.create_table()
+    if not m.CampUserRelationShip.table_exists():
+        m.CampUserRelationShip.create_table()
     if not m.Submission.table_exists():
         m.Submission.create_table()
 
