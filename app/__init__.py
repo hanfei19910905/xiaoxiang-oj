@@ -2,6 +2,8 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_peewee.db import Database
 from flask_login import LoginManager
+from flask_admin import Admin
+from flask_admin.contrib.peewee import ModelView
 
 from config import config
 
@@ -24,3 +26,6 @@ app.register_blueprint(prob_blueprint)
 
 from .contest import contest as contest_blueprint
 app.register_blueprint(contest_blueprint)
+
+_admin = Admin(app, template_mode='bootstrap3')
+from . import admin
