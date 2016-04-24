@@ -40,7 +40,7 @@ class CampUserRelationShip(db.Model):
 
     class Meta:
         indexes = (
-            (('user_id', 'camp_id'), True)
+            (('user_id', 'camp_id'), True),
         )
 
 
