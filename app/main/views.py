@@ -42,4 +42,7 @@ from .. import login_manager
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.select().where(User.id == user_id).get()
+    try:
+        User.select().where(User.id == user_id).get()
+    except DoesNotExist:
+        return None
