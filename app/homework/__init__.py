@@ -3,6 +3,6 @@
 
 from flask import Blueprint
 
-contest = Blueprint('contest', __name__)
+homework = Blueprint('home_work', __name__)
 
 from . import views

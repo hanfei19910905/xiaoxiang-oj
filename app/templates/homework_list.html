@@ -11,25 +11,25 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <td>Contest ID</td>
-                    <td>Contest Name</td>
-                    <td>Begin Time</td>
-                    <td>End Time</td>
+                    <td>训练营</td>
+                    <td>作业名称</td>
+                    <td>开始时间</td>
+                    <td>结束时间</td>
                 </tr>
             </thead>
             <tbody>
-                {% for contest in clist %}
+                {% for homework in clist %}
                 <tr>
-                    <td>{{ contest.id }}</td>
-                    <td><a href="{{ url_for('contest.contest_view', cid=contest.id) }}">{{ contest.contest_name }}</a></td>
-                    <td>{{ contest.begin_time }}</td>
-                    <td>{{ contest.end_time }}</td>
+                    <td>{{homework.camp.name}}</td>>
+                    <td>{{ homework.name }}</td>
+                    <td>{{ homework.begin_time }}</td>
+                    <td>{{ homework.end_time }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         {% else %}
-        <h4>Not has contest!</h4>
+        <h4>虾米作业都没有哦!</h4>
         {% endif %}
     </div>
 </div>
