@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_peewee.db import Database
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
-from flask_admin.contrib.peewee import ModelView
+from flask_admin.contrib import sqla
 
 from config import config
 
@@ -11,7 +11,7 @@ bootstrap = Bootstrap()
 
 app = Flask(__name__)
 app.config.from_object(config['default'])
-db = Database(app)
+db = SQLAlchemy(app)
 bootstrap.init_app(app)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -27,5 +27,5 @@ login_manager.init_app(app)
 from .homework import homework as homework_blueprint
 app.register_blueprint(homework_blueprint, url_prefix='/homework')
 
-_admin = Admin(app, template_mode='bootstrap3')
-from . import admin
+# _admin = Admin(app, template_mode='bootstrap3')
+# from . import admin
