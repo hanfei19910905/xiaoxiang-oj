@@ -14,14 +14,9 @@ class Config:
 
 class DevConfig(Config):
     DEBUG = True
-    DATABASE={
-                'name': 'xiaoxiang_oj',
-                'engine': 'peewee.MySQLDatabase',
-                'user' : 'root',
-                'password' : '123456',
-                'host' : '127.0.0.1',
-                'charset' : 'utf8',
-            }
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@127.0.0.1:3306/xiaoxiang_oj'
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 config = {
     'default' : DevConfig
