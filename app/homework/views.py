@@ -5,17 +5,18 @@ from flask import render_template, redirect, request, url_for, flash
 from . import homework
 from ..prob import prob
 from ..models import HomeWork, Problem, Submission, User
-from peewee import DoesNotExist
-
+from .. import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 @homework.route('/list')
 def list_view():
-    list = None
+    hlist = None
+    sess = Session()
     try:
-        list = HomeWork.select().order_by(HomeWork.camp)
-    except DoesNotExist:
+        hlist = sess.query(HomeWork).order_by(HomeWork.camp).all()
+    except NoResultFound:
         pass
-    return render_template('homework_list.html', clist=list)
+    return render_template('homework_list.html', clist=hlist)
 
 
 # @homework.route('/cview/<cid>')

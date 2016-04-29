@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib import sqla
+from sqlalchemy.orm import sessionmaker
 
 from config import config
 
@@ -12,6 +13,9 @@ bootstrap = Bootstrap()
 app = Flask(__name__)
 app.config.from_object(config['default'])
 db = SQLAlchemy(app)
+engine = db.get_engine(app)
+Session = sessionmaker(bind=engine)
+
 bootstrap.init_app(app)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
