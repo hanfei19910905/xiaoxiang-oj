@@ -17,6 +17,7 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:123456@127.0.0.1:3306/xiaoxiang_oj'
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    UPLOAD_FOLDER = basedir + '/files/'
 
 config = {
     'default' : DevConfig

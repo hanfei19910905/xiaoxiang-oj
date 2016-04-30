@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, send_from_directory
 from flask_login import login_user, login_required, logout_user
 from . import main
 from .. import app
@@ -32,6 +32,11 @@ def index1():
     return redirect(url_for('main.index'))
 
 
+@main.route('/download/<filename>')
+def download(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 @main.route('/logout')
 @login_required
 def logout():
@@ -44,6 +49,8 @@ from .. import login_manager
 @login_manager.user_loader
 def load_user(user_id):
     try:
+        sess=Session()
         sess.query(User).filter(User.id == user_id).one()
     except NoResultFound:
         return None
+
