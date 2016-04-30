@@ -21,11 +21,34 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return self.password == password
 
+    def __str__(self):
+        return self.name + ", " + self.email
+
+
+class JudgeNorm(db.Model):
+    __tablename__ = 'judgenorm'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    code = db.Column(db.TEXT)
+    name = db.Column(db.String(200))
+    value = db.Column(db.DECIMAL)
+
+    def  __str__(self):
+        return self.name
+
+
+class Data(db.Model):
+    __tablename__ = 'data'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(200), unique=True, index=True)
+    train = db.Column(db.String(200))
+    test1= db.Column(db.String(200))
+    test2 = db.Column(db.String(200))
+
     def __unicode__(self):
         return self.name
 
     def __str__(self):
-        return self.name + ", " + self.email
+        return self.name
 
 
 class TrainCamp(db.Model):
@@ -47,19 +70,27 @@ homework_prob = db.Table('homework_prob',
     db.Column('problem_id', db.ForeignKey('problem.id'))
 )
 
+
 class Problem(db.Model):
     __tablename__ = 'problem'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(200))
     data_id = db.Column(db.ForeignKey('data.id'))
+    data = db.relationship(Data)
     description = db.Column(db.TEXT)
     judge_id = db.Column(db.ForeignKey('judgenorm.id'))
+    judge = db.relationship(JudgeNorm)
+
+    def __str__(self):
+        return self.name
+
 
 class HomeWork(db.Model):
     __tablename__ = 'homework'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    camp = db.Column(db.ForeignKey('traincamp.id'))
+    camp_id = db.Column(db.ForeignKey('traincamp.id'))
+    camp = db.relationship('TrainCamp')
     name = db.Column(db.String(200))
     #prob_count = IntegerField()
     #submit_count = IntegerField()
@@ -71,37 +102,10 @@ class HomeWork(db.Model):
         return self.name
 
 
-class Data(db.Model):
-    __tablename__ = 'data'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(200), unique=True, index=True)
-    train = db.Column(db.BLOB)
-    test1= db.Column(db.BLOB)
-    test2 = db.Column(db.BLOB)
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-
-class JudgeNorm(db.Model):
-    __tablename__ = 'judgenorm'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    code = db.Column(db.TEXT)
-    name = db.Column(db.String(200))
-    value = db.Column(db.DECIMAL)
-
-    def  __str__(self):
-        return self.name
-
-
-
-
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user = db.Column(db.ForeignKey('user.id'), index=True)
+    user_id = db.Column(db.ForeignKey('user.id'), index=True)
+    user = db.relationship(User)
     form = db.Column(ForeignKey('homework_prob.id'))
     score = db.Column(db.Integer)
     source = db.Column(db.TEXT)

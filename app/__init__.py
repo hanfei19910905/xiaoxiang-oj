@@ -29,5 +29,5 @@ login_manager.init_app(app)
 from .homework import homework as homework_blueprint
 app.register_blueprint(homework_blueprint, url_prefix='/homework')
 
-# _admin = Admin(app, template_mode='bootstrap3')
-# from . import admin
+_admin = Admin(app, template_mode='bootstrap3')
+from . import admin
