@@ -27,7 +27,7 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/')
+@main.route('/')                                     
 def index1():
     return redirect(url_for('main.index'))
 

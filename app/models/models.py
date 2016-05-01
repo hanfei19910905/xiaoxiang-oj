@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(200))
     password = db.Column(db.String(200))
     salt = db.Column(String(200))
+    camp = db.relationship("TrainCamp", secondary=camp_user)
     #admin = BooleanField()
 
     def verify_password(self, password):
@@ -29,7 +30,7 @@ class JudgeNorm(db.Model):
     __tablename__ = 'judgenorm'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.TEXT)
-    name = db.Column(db.String(200))
+    name = db.Column(db.String(200))    
     value = db.Column(db.DECIMAL)
 
     def  __str__(self):
@@ -81,6 +82,7 @@ class Problem(db.Model):
     description = db.Column(db.TEXT)
     judge_id = db.Column(db.ForeignKey('judgenorm.id'))
     judge = db.relationship(JudgeNorm)
+    homework = db.relationship("HomeWork", secondary=homework_prob)
 
     def __str__(self):
         return self.name
@@ -90,13 +92,13 @@ class HomeWork(db.Model):
     __tablename__ = 'homework'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     camp_id = db.Column(db.ForeignKey('traincamp.id'))
-    camp = db.relationship('TrainCamp')
+    camp = db.relationship(TrainCamp)
     name = db.Column(db.String(200))
     #prob_count = IntegerField()
     #submit_count = IntegerField()
     begin_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
-    problem = db.relationship(Problem, secondary=homework_prob)
+    problem = db.relationship("Problem", secondary=homework_prob)
 
     def __str__(self):
         return self.name
