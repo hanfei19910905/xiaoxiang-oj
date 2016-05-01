@@ -5,7 +5,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_required
 from . import homework
 from ..prob import prob
-from ..models import HomeWork, Problem, Submission, User
+from ..models import HomeWork, homework_prob
 from .. import Session
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -21,14 +21,15 @@ def list_view():
     return redirect(url_for('main.index'))
 
 
-@homework.route('/prob/<hid>')
+@homework.route('/problist/<hid>')
+@login_required
 def contest_view(hid):
     contest = HomeWork.query.filter_by(id = hid).first()
     if contest is None:
         flash("没有这个作业哦！")
         return redirect(url_for('main.index'))
     plist = contest.problem
-    return render_template('contest_view.html', plist=plist, homework=homework)
+    return render_template('contest_view.html', plist=plist, homework=contest)
 
 #
 # @homework.route('/cview/<cid>/status')

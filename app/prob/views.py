@@ -1,55 +1,43 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, url_for, flash
 from . import prob, sandbox_client
 from .forms import SubmitForm
 from ..models import Problem, Submission
 from flask_login import login_required, current_user
 import datetime
-from .. import Session
 
 
 @prob.route('/problem_set') 
 def prob_set():
-    sess = Session()
-    plist = sess.query(Problem).order_by(Problem.id).all()
+    plist = Problem.query.order_by(Problem.id).all()
     return render_template('prob_list.html', plist=plist)
 
 
-@prob.route('/problem_set/<pid>')
-def prob_view(pid):
-    sess = Session()
+@prob.route('/problem_set/<hid>/<pid>')
+@login_required
+def prob_view(hid, pid):
     problem = Problem.query.filter_by(id = pid).first()
-    if problem is not None:
-        return render_template('prob_view.html', problem=problem)
-    flash("这题并不存在！")
-    return redirect(url_for('index'))
+    form = SubmitForm()
+    print(form.is_submitted())
+    if form.validate_on_submit() and problem is not None:
+        #problem_id = problem.id
+        #time_limit = problem.time_limit
+        #mem_limit = problem.mem_limit
+        #submit = Submission.create(contest = problem.contest, prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
+        #sandbox_client.call(submit.get_id(), problem_id, time_limit, mem_limit, form.source.data)
+        return redirect(url_for("prob.status"))
+    else:
+        print("not valid!")
+    return render_template('prob_view.html', problem=problem, form = form, hid = -1)
 
 
-# @prob.route('/cview/<cid>/prob/<pid>/submit', methods=['GET', 'POST'])
-# @login_required
-# def submit(cid, pid):
-#     problem = Problem.select().where(Problem.contest==cid, Problem.show_id==pid).get()
-#     form = SubmitForm()
-#     print(form.is_submitted())
-#     if form.validate_on_submit():
-#         problem_id = problem.id
-#         time_limit = problem.time_limit
-#         mem_limit = problem.mem_limit
-#         submit = Submission.create(contest = problem.contest, prob = problem_id, user = current_user.get_id(), status = 0, time = datetime.datetime.now(), source = form.source.data)
-#         sandbox_client.call(submit.get_id(), problem_id, time_limit, mem_limit, form.source.data)
-#         return redirect(url_for("prob.status"))
-#     else:
-#         print("not valid!")
-#     return render_template('submit.html', problem=problem, form = form)
-
-
-# @prob.route('/status')
-# @login_required
-# def status():
-#     submission_set = Submission.select().where(Submission.user == current_user.get_id()).order_by(Submission.id.desc())
-#     return render_template("status.html", slist = submission_set, cuid = int(current_user.get_id()))
+@prob.route('/status')
+@login_required
+def status():
+    submission_set = Submission.query(user = current_user.get_id()).order_by(Submission.id.desc())
+    return render_template("status.html", slist = submission_set, cuid = int(current_user.get_id()))
 
 # @prob.route('/status/<sid>/code')
 # @login_required

@@ -13,8 +13,8 @@
         <tbody>
             {% for problem in plist %}
             <tr>
-                <td>{{ problem.id }}</td>
-                <td><a href="#">{{ problem.name }}</a></td>
+                <td>{{ problem.show_id }}</td>
+                <td><a href="{{url_for('prob.prob_view', hid = homework.id, pid = problem.id)}}">{{ problem.name }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
