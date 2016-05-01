@@ -1,6 +1,6 @@
 import pika
-import time
-from app.models import Submission, Problem
+from app.models import Submission
+from app import db
 from .utils import decode
 from .sandbox_executor import SandBoxExecutor
 
@@ -18,15 +18,24 @@ class SandBoxService(object):
 
         def callback(ch, method, properties, body):
             ch.basic_ack(delivery_tag = method.delivery_tag)
-            submit_id , prob_id, time_limit, mem_limit, source = decode(body)
+            submit_id , result_path, data_path, judge_path = decode(body)
+            print("Exec!!!", submit_id, result_path, data_path, judge_path)
             if submit_id is None:
                 print("Fail!!!!")
                 return
-            prob = Problem.select().where(Problem.id == prob_id).get()
-            ret = SandBoxExecutor.execute(submit_id, time_limit, mem_limit, source, prob.input, prob.output)
-            submit = Submission.select().where(Submission.id==submit_id).get()
+            submit = Submission.query.filter_by(id = submit_id).first()
+            if submit is not None:
+                db.session.status = 'judging'
+                db.session.commit()
+            else:
+                db.session.status = 'failed, system error!'
+                db.session.commit()
+                return
+            ret, score = SandBoxExecutor.execute(submit_id, result_path, data_path, judge_path)
             submit.status = ret
-            submit.save()
+            if ret == 'success':
+                submit.score = score
+            db.session.commit()
 
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(callback,

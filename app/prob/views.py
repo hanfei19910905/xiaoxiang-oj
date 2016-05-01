@@ -31,7 +31,7 @@ def prob_view(hid, pid):
             homework = home
     form = SubmitForm()
     print(problem, homework, home_list)
-    if form.validate_on_submit() and problem is not None and homework is not None:
+    if form.validate_on_submit() and problem is not None and (homework is not None or hid == -1):
         source = form.source.data
         if len(source.filename) < 3 or source.filename[-3:] != '.py' :
             flash('the source file should end with .py, but yours are %s' % source.filename)
@@ -40,7 +40,11 @@ def prob_view(hid, pid):
         if len(result.filename) < 4 or result.filename[-4:] != '.csv' :
             flash('the source file should end with .csv, but yours are %s' % result.filename)
             return redirect(request.args.get('next') or url_for("main.index"))
-        sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now())
+        if hid != -1:
+            sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now(), status = 'pending')
+        else:
+            sub = Submission(user_id = current_user.id, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now())
+
         db.session.add(sub)
         db.session.commit()
         try:
@@ -59,6 +63,9 @@ def prob_view(hid, pid):
             db.session.delete(sub)
             db.session.commit()
             return redirect(request.args.get('next') or url_for("main.index"))
+        sandbox_client.call(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'), \
+                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
+                            os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
 
     else:
@@ -70,8 +77,8 @@ def prob_view(hid, pid):
 @prob.route('/status')
 @login_required
 def status():
-    submission_set = Submission.query(user = current_user.get_id()).order_by(Submission.id.desc())
-    return render_template("status.html", slist = submission_set, cuid = int(current_user.get_id()))
+    submission_set = Submission.query.filter_by(user_id = current_user.get_id()).order_by(Submission.id.desc()).all()
+    return render_template("status.html", slist = submission_set, chid = int(current_user.get_id()))
 
 # @prob.route('/status/<sid>/code')
 # @login_required

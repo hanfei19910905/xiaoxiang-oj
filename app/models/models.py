@@ -29,9 +29,9 @@ class User(UserMixin, db.Model):
 class JudgeNorm(db.Model):
     __tablename__ = 'judgenorm'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    code = db.Column(db.TEXT)
-    name = db.Column(db.String(200))    
+    name = db.Column(db.String(200))
     value = db.Column(db.DECIMAL)
+    code = db.Column(db.String(100))
 
     def  __str__(self):
         return self.name
@@ -118,6 +118,6 @@ class Submission(db.Model):
     # result is the result file path that the student upload
     result = db.Column(db.String(100))
     # status
-    status = db.Column(db.String(10))
+    status = db.Column(db.String(50))
     # time
     time = db.Column(db.DateTime)

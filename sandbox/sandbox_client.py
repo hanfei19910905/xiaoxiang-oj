@@ -12,9 +12,9 @@ class SandBoxRpcClient(object):
 
         self.channel.queue_declare(queue=ch, durable=True)
 
-    def call(self, submit_id, user_id, time_limit, mem_limit, source):
+    def call(self, submit_id, result_path, data_path, judge_path):
 
-        rpc_body = encode(submit_id, user_id, time_limit, mem_limit, source)
+        rpc_body = encode(submit_id, result_path, data_path, judge_path)
         self.channel.basic_publish(exchange='',
                                    routing_key=self.ch,
                                    properties=pika.BasicProperties(

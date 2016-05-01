@@ -9,7 +9,32 @@ import functools, os
 _admin.add_view(ModelView(User,  db.session, name="用户管理"))
 _admin.add_view(ModelView(TrainCamp, db.session, name="训练营管理"))
 _admin.add_view(ModelView(HomeWork, db.session, name="作业管理"))
-_admin.add_view(ModelView(JudgeNorm, db.session, name="评价指标"))
+
+
+class JudgeView(ModelView):
+    def namegen(obj, filedata):
+        try:
+            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'judge', obj.name))
+        except os.error:
+            print('error!!')
+        return obj.name + "/judge.py"
+
+    form_overrides = {
+        'code': form.FileUploadField,
+    }
+
+    form_args = {
+        'code' : {'label' : 'Judge Code', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'judge/', 'namegen' : namegen, "allowed_extensions" : ['py']},
+    }
+
+    def _list_download_link(view, context, model, name):
+        return Markup('<a href=/download/%s> download </a>' % (model.code))
+
+    column_formatters = {
+        'code': _list_download_link
+    }
+
+_admin.add_view(JudgeView(JudgeNorm, db.session, name="评价指标"))
 _admin.add_view(ModelView(Problem, db.session, name="题库"))
 
 
@@ -49,8 +74,8 @@ class DataView(ModelView):
 
     form_args = {
         'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train')},
-        'test1' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1')},
-        'test2' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2')},
+        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1')},
+        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2')},
     }
 
     def _list_download_link(view, context, model, name):
@@ -71,4 +96,3 @@ class DataView(ModelView):
     }
 _admin.add_view(DataView(Data, db.session, name="数据集管理"))
 
-print(app.config['UPLOAD_FOLDER'])

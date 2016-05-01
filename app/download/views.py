@@ -7,13 +7,17 @@ import os
 
 @download.route('/data/<filename>')
 def download_data(filename):
-    print('download!!', os.path.join(app.config['UPLOAD_FOLDER'], 'data'))
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename)
 
 
 @download.route('/secret/<filename>')
 def download_sec(filename):
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secret'), filename)
+
+
+@download.route('/judge/<filename>')
+def download_judge(filename):
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'judge'), filename)
 
 
 @download.route('/submission/<sid>/<filename>')
