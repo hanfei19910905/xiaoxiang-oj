@@ -9,27 +9,25 @@ from ..models import HomeWork, Problem, Submission, User
 from .. import Session
 from sqlalchemy.orm.exc import NoResultFound
 
+
 @homework.route('/list')
 @login_required
 def list_view():
-    hlist = None
-    sess = Session()
     try:
-        hlist = sess.query(HomeWork).order_by(HomeWork.camp_id).all()
+        hlist = HomeWork.query.order_by(HomeWork.camp_id).all()
+        return render_template('homework_list.html', clist=hlist)
     except NoResultFound:
-        pass
-    return render_template('homework_list.html', clist=hlist)
+        flash('什么作业都没有哦')
+    return redirect(url_for('main.index'))
 
 
-@homework.route('/<hid>')
+@homework.route('/prob/<hid>')
 def contest_view(hid):
-    plist = None
-    sess = Session()
-    contest = sess.query(HomeWork).filter(HomeWork.id == hid).one()
-    try:
-        plist = HomeWork.problem
-    except DoesNotExist:
-        pass
+    contest = HomeWork.query.filter_by(id = hid).first()
+    if contest is None:
+        flash("没有这个作业哦！")
+        return redirect(url_for('main.index'))
+    plist = contest.problem
     return render_template('contest_view.html', plist=plist, homework=homework)
 
 #

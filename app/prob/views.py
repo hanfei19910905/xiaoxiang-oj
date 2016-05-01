@@ -9,17 +9,22 @@ from flask_login import login_required, current_user
 import datetime
 from .. import Session
 
+
 @prob.route('/problem_set') 
 def prob_set():
     sess = Session()
     plist = sess.query(Problem).order_by(Problem.id).all()
     return render_template('prob_list.html', plist=plist)
 
+
 @prob.route('/problem_set/<pid>')
 def prob_view(pid):
     sess = Session()
-    problem = sess.query(Problem).filter(Problem.id == pid).one()
-    return render_template('prob_view.html', problem=problem)
+    problem = Problem.query.filter_by(id = pid).first()
+    if problem is not None:
+        return render_template('prob_view.html', problem=problem)
+    flash("这题并不存在！")
+    return redirect(url_for('index'))
 
 
 # @prob.route('/cview/<cid>/prob/<pid>/submit', methods=['GET', 'POST'])

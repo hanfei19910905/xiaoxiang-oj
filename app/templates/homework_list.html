@@ -18,12 +18,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for homework in clist %}
+                {% for work in clist %}
                 <tr>
-                    <td>{{homework.camp.name}}</td>
-                    <td>{{ homework.name }}</td>
-                    <td>{{ homework.begin_time }}</td>
-                    <td>{{ homework.end_time }}</td>
+                    <td>{{work.camp.name}}</td>
+                    <td><a href = "{{url_for('home_work.contest_view',hid = work.id)}}">{{ work.name }}</a></td>
+                    <td>{{ work.begin_time }}</td>
+                    <td>{{ work.end_time }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

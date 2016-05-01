@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
-from flask_admin.contrib import sqla
 from sqlalchemy.orm import sessionmaker
 from config import config
 
