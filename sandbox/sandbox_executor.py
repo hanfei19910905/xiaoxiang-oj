@@ -20,11 +20,12 @@ class SandBoxExecutor(object):
             print("Init Error")
             return "system error! create sandbox error! please submit again!", None
         box_path = '/tmp/box/' + str(box_id) + '/box/'
-        os.symlink(result_path, os.path.join(box_path, 'result.csv'))
-        os.symlink(data_path, os.path.join(box_path, 'data.csv'))
-        os.symlink(judge_path, os.path.join(box_path, 'judge.py'))
+        os.system("\cp %s %s" % (result_path, os.path.join(box_path, 'result.csv')))
+        os.system("\cp %s %s" % (data_path, os.path.join(box_path, 'data.csv')))
+        os.system("\cp %s %s" % (judge_path, os.path.join(box_path, 'judge.py')))
         print('PYPY', app.config['PY_PATH'])
-        os.symlink(app.config['PY_PATH'], os.path.join(box_path, 'main.py'))
+        os.system("\cp %s %s" % (app.config['PY_PATH'], os.path.join(box_path, 'main.py')))
+        os.system("touch %s" % os.path.join(box_path, '__init__.py'))
 
         exec_cmd = '/usr/local/bin/isolate -e --box-id=' + str(box_id) + ' --run /usr/bin/python main.py' + " -t 60 -o res.log --meta=run.log"
         print("Exec exec_cmd: ", exec_cmd)
@@ -35,7 +36,7 @@ class SandBoxExecutor(object):
 
         output_path = os.path.join( box_path , 'res.log')
         file_fd = open(output_path, 'r')
-        user_output = file_fd.readline(limit = 1)
+        user_output = file_fd.readline()
         try:
             score = float(user_output)
         except ValueError:

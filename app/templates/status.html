@@ -13,6 +13,7 @@
             <th>Time</th>
             <th>Source</th>
             <th>Status</th>
+            <th>Score</th>
         </thead>
         <tbody>
             {% for submit in slist %}
@@ -23,6 +24,7 @@
                 <td>{{ submit.time }}</td>
                 <td>Code</td>
                 <td>{{ submit.status }}</td>
+                <td>{{ submit.score }}</td>
             </tr>
             {% endfor %}
         </tbody>
