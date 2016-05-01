@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from flask import render_template, redirect, request, url_for, flash
+from flask_login import login_required
 from . import homework
 from ..prob import prob
 from ..models import HomeWork, Problem, Submission, User
@@ -9,26 +10,28 @@ from .. import Session
 from sqlalchemy.orm.exc import NoResultFound
 
 @homework.route('/list')
+@login_required
 def list_view():
     hlist = None
     sess = Session()
     try:
-        hlist = sess.query(HomeWork).order_by(HomeWork.camp).all()
+        hlist = sess.query(HomeWork).order_by(HomeWork.camp_id).all()
     except NoResultFound:
         pass
     return render_template('homework_list.html', clist=hlist)
 
 
-# @homework.route('/cview/<cid>')
-# def contest_view(cid):
-#     plist = None
-#     contest = TrainCamp.select().where(TrainCamp.id == cid).get()
-#     try:
-#         plist = Problem.select().where(Problem.contest == cid)
-#     except DoesNotExist:
-#         pass
-#     return render_template('contest_view.html', plist=plist, contest=contest)
-#
+@homework.route('/<hid>')
+def contest_view(hid):
+    plist = None
+    sess = Session()
+    contest = sess.query(HomeWork).filter(HomeWork.id == hid).one()
+    try:
+        plist = HomeWork.problem
+    except DoesNotExist:
+        pass
+    return render_template('contest_view.html', plist=plist, homework=homework)
+
 #
 # @homework.route('/cview/<cid>/status')
 # def status(cid):

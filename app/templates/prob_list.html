@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block page_content %}
 <div class="page-header">
-    <center><h2>{{ homework.name }}</h2></center>
+    <h2>Problem Set</h2>
 </div>
 <div class="page-content">
     {% if plist %}
@@ -14,7 +14,7 @@
             {% for problem in plist %}
             <tr>
                 <td>{{ problem.id }}</td>
-                <td><a href="#">{{ problem.name }}</a></td>
+                <td><a href="{{ url_for('prob.prob_view', pid=problem.id) }}">{{ problem.name }}</a></td>
             </tr>
             {% endfor %}
         </tbody>
