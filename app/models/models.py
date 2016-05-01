@@ -108,8 +108,16 @@ class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.ForeignKey('user.id'), index=True)
     user = db.relationship(User)
-    form = db.Column(ForeignKey('homework_prob.id'))
+    prob_id = db.Column(ForeignKey('problem.id'))
+    prob = db.relationship(Problem)
+    h_id = db.Column(ForeignKey('homework.id'))
+    homework = db.relationship(HomeWork)
     score = db.Column(db.Integer)
-    source = db.Column(db.TEXT)
+    # source is the source file path that the student upload
+    source = db.Column(db.String(100))
+    # result is the result file path that the student upload
+    result = db.Column(db.String(100))
+    # status
     status = db.Column(db.String(10))
+    # time
     time = db.Column(db.DateTime)

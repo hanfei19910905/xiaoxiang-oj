@@ -28,5 +28,8 @@ app.register_blueprint(prob_blueprint)
 from .homework import homework as homework_blueprint
 app.register_blueprint(homework_blueprint, url_prefix='/homework')
 
+from .download import download as download_blueprint
+app.register_blueprint(download_blueprint, url_prefix='/download')
+
 _admin = Admin(app, template_mode='bootstrap3')
 from . import admin
