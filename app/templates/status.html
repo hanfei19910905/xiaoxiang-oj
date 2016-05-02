@@ -20,7 +20,7 @@
             <tr>
                 <td>{{ submit.id }}</td>
                 <td>{{ submit.user.name }}</td>
-                <td><a href="{{ url_for('prob.prob_view', hid=chid, pid=submit.prob.id) }}">{{ submit.prob.id }}</a></td>
+                <td><a href="{{ url_for('prob.prob_view', hid=chid, pid=submit.prob.id) }}">{{ submit.prob.name }}</a></td>
                 <td>{{ submit.time }}</td>
                 <td>Code</td>
                 <td>{{ submit.status }}</td>

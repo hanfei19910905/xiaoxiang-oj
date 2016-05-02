@@ -19,12 +19,12 @@ class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(200), unique=True)
-    name = db.Column(db.String(200))
-    password = db.Column(db.String(200))
-    salt = db.Column(db.String(200))
+    name = db.Column(db.String(200),nullable=False)
+    password = db.Column(db.String(200),nullable=False)
+    salt = db.Column(db.String(200),nullable=False)
     camp = db.relationship("TrainCamp", secondary=camp_user)
-    admin = db.Column(db.Boolean())
     problem=db.relationship('Problem', secondary=prob_user, backref=db.backref('prob_set', lazy='dynamic'))
+    admin = db.Column(db.Boolean(),nullable=False)
 
     def verify_password(self, password):
         return self.password == password
@@ -40,9 +40,9 @@ class User(UserMixin, db.Model):
 class JudgeNorm(db.Model):
     __tablename__ = 'judgenorm'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(200))
+    name = db.Column(db.String(200),nullable=False)
     value = db.Column(db.DECIMAL(20))
-    code = db.Column(db.String(100))
+    code = db.Column(db.String(100),nullable=False)
 
     def  __str__(self):
         return self.name
@@ -52,9 +52,9 @@ class Data(db.Model):
     __tablename__ = 'data'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), unique=True, index=True)
-    train = db.Column(db.String(200))
+    train = db.Column(db.String(200),nullable=False)
     test1= db.Column(db.String(200))
-    test2 = db.Column(db.String(200))
+    test2 = db.Column(db.String(200),nullable=False)
 
     def __unicode__(self):
         return self.name
@@ -66,12 +66,10 @@ class Data(db.Model):
 class TrainCamp(db.Model):
     __tablename__ = 'traincamp'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(200), unique=True)
-    begin_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
+    name = db.Column(db.String(200), unique=True,nullable=False)
+    begin_time = db.Column(db.DateTime,nullable=False)
+    end_time = db.Column(db.DateTime,nullable=False)
     user = db.relationship(User, secondary=camp_user)
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -87,11 +85,12 @@ class Problem(db.Model):
     __tablename__ = 'problem'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), nullable=False)
-    author = db.Column(db.String(200))
-    data_id = db.Column(db.ForeignKey('data.id'))
+    author_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    author = db.relationship(User)
+    data_id = db.Column(db.ForeignKey('data.id'), nullable=False)
     data = db.relationship(Data)
-    description = db.Column(db.TEXT)
-    judge_id = db.Column(db.ForeignKey('judgenorm.id'))
+    description = db.Column(db.TEXT, nullable=False)
+    judge_id = db.Column(db.ForeignKey('judgenorm.id'), nullable=False)
     judge = db.relationship(JudgeNorm)
     homework = db.relationship("HomeWork", secondary=homework_prob)
     user = db.relationship("User", secondary=prob_user)
@@ -105,11 +104,11 @@ class HomeWork(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     camp_id = db.Column(db.ForeignKey('traincamp.id'))
     camp = db.relationship(TrainCamp)
-    name = db.Column(db.String(200))
+    name = db.Column(db.String(200),nullable=False)
     #prob_count = IntegerField()
     #submit_count = IntegerField()
-    begin_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
+    begin_time = db.Column(db.DateTime,nullable=False)
+    end_time = db.Column(db.DateTime,nullable=False)
     problem = db.relationship("Problem", secondary=homework_prob)
 
     def __str__(self):
