@@ -116,7 +116,7 @@ class Submission(db.Model):
     prob = db.relationship(Problem)
     h_id = db.Column(ForeignKey('homework.id'))
     homework = db.relationship(HomeWork)
-    score = db.Column(db.DECIMAL(20))
+    score = db.Column(db.DECIMAL(10, 2))
     # source is the source file path that the student upload
     source = db.Column(db.String(100))
     # result is the result file path that the student upload
