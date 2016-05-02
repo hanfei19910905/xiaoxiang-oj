@@ -7,13 +7,11 @@
     {% if plist %}
     <table class="table table-striped">
         <thead>
-            <th>Problem ID</th>
             <th>Problem Name</th>
         </thead>
         <tbody>
-            {% for problem in plist %}
+            {% for problem in (plist) %}
             <tr>
-                <td>{{ problem.show_id }}</td>
                 <td><a href="{{url_for('prob.prob_view', hid = homework.id, pid = problem.id)}}">{{ problem.name }}</a></td>
             </tr>
             {% endfor %}

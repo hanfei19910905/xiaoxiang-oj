@@ -4,9 +4,8 @@
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_required
 from . import homework
-from ..prob import prob
 from ..models import HomeWork, homework_prob
-from .. import Session
+import datetime
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -14,7 +13,7 @@ from sqlalchemy.orm.exc import NoResultFound
 @login_required
 def list_view():
     try:
-        hlist = HomeWork.query.order_by(HomeWork.camp_id).all()
+        hlist = HomeWork.query.order_by(HomeWork.begin_time.desc()).all()
         return render_template('homework_list.html', clist=hlist)
     except NoResultFound:
         flash('什么作业都没有哦')
@@ -25,8 +24,8 @@ def list_view():
 @login_required
 def contest_view(hid):
     contest = HomeWork.query.filter_by(id = hid).first()
-    if contest is None:
-        flash("没有这个作业哦！")
+    if contest is None or contest.begin_time > datetime.datetime.now() or datetime.datetime.now() > contest.end_time:
+        flash("这个作业不在时间内！")
         return redirect(url_for('main.index'))
     plist = contest.problem
     return render_template('contest_view.html', plist=plist, homework=contest)
