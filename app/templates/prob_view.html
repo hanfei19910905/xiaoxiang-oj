@@ -3,7 +3,8 @@
 {% import "bootstrap/wtf.html" as wtf %}
 <div class="page-header">
     <div class="container">
-        <h3>{{ problem.id }}.{{ problem.name }}</h3>
+        <h2>{{ problem.name }}</h2>
+        <p><b>author:</b>{{ problem.author.name }}</p>
     </div>
 <!--     <div class="container">
         <div class="col-lg-6">

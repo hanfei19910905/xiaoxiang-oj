@@ -23,6 +23,9 @@
                 {% if current_user.is_authenticated %}
                 <li><a href="/status">我的提交</a></li>
                 {% endif %}
+                {% if current_user.is_admin %}
+                <li><a href="/admin">管理模块</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_authenticated %}
