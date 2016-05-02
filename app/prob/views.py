@@ -5,7 +5,7 @@ from flask import render_template, redirect, url_for, flash, request
 from . import prob, sandbox_client
 from .. import app, db
 from .forms import SubmitForm
-from ..models import Problem, Submission
+from ..models import Problem, Submission, User
 from flask_login import login_required, current_user
 import datetime, os
 
@@ -22,6 +22,7 @@ def prob_view(hid, pid):
     hid = int(hid)
     pid = int(pid)
     problem = Problem.query.filter_by(id = pid).first()
+    usr = db.session.query(User).filter(User.id == current_user.id).one()
     homework = None
     home_list = problem.homework
     for home in home_list:
@@ -32,6 +33,8 @@ def prob_view(hid, pid):
     form = SubmitForm()
     print(problem, homework, home_list)
     if form.validate_on_submit() and problem is not None and (homework is not None or hid == -1):
+        if problem not in usr.problem:
+            usr.problem.append(problem)
         source = form.source.data
         if len(source.filename) < 3 or source.filename[-3:] != '.py' :
             flash('the source file should end with .py, but yours are %s' % source.filename)

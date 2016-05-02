@@ -1,9 +1,78 @@
 {% extends "base.html" %}
 {% block page_content %}
-<h1>Hello,
-{% if current_user.is_authenticated %}
-    {{ current_user.name }}
-{% else %}
-    Stranger
-{% endif %}!</h1>
+<div class="page-header">
+    <h1>Hello,
+    {% if current_user.is_authenticated %}
+        {{ current_user.name }}
+    {% else %}
+        Stranger
+    {% endif %}!</h1>
+</div>
+<div class="page-content">
+<div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#problem" aria-controls="problem" role="tab" data-toggle="tab">Problem</a></li>
+        <li role="presentation"><a href="#homework" aria-controls="profile" role="tab" data-toggle="tab">Homework</a></li>
+        <li role="presentation"><a href="#camp" aria-controls="messages" role="tab" data-toggle="tab">Train Camp</a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="problem">
+            <table class="table table-striped">
+                <thead>
+                    <th>User</th>
+                    <th>Total</th>
+                    {% for pid in prank[0][1]%}
+                    {% if pid != 'total' %}
+                    <th>{{ pid }}</th>
+                    {% endif %}
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for prk in prank %}
+                    <tr>
+                        <td>{{ prk[0] }}</td>
+                        <td>{{ prk[1]['total'] }}</td>
+                        {% for hid in hrank[0][1]%}
+                        {% if pid != 'total' %}
+                        <td>{{ hrk[1][pid] }}</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="homework">
+            <table class="table table-striped">
+                <thead>
+                    <th>User</th>
+                    <th>Total</th>
+                    {% for hid in prank[0][1]%}
+                    {% if hid != 'total' %}
+                    <th>{{ hid }}</th>
+                    {% endif %}
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for prk in prank %}
+                    <tr>
+                        <td>{{ prk[0] }}</td>
+                        <td>{{ prk[1]['total'] }}</td>
+                        {% for pid in prank[0][1]%}
+                        {% if pid != 'total' %}
+                        <td>{{ prk[1][pid] }}</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="camp">...</div>
+    </div>
+</div>
+
+</div>
 {% endblock %}

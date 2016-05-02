@@ -9,6 +9,12 @@ camp_user = db.Table('camp_user',
     db.Column('traincamp_id', Integer, db.ForeignKey('traincamp.id'))
 )
 
+prob_user = db.Table('prob_user',
+    db.Column('user_id', Integer, db.ForeignKey('user.id')),
+    db.Column('prob_id', Integer, db.ForeignKey('problem.id')),
+    db.Column('max_score', db.DECIMAL(10, 2))
+)
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -18,6 +24,7 @@ class User(UserMixin, db.Model):
     salt = db.Column(db.String(200))
     camp = db.relationship("TrainCamp", secondary=camp_user)
     admin = db.Column(db.Boolean())
+    problem=db.relationship('Problem', secondary=prob_user, backref=db.backref('prob_set', lazy='dynamic'))
 
     def verify_password(self, password):
         return self.password == password
@@ -87,6 +94,7 @@ class Problem(db.Model):
     judge_id = db.Column(db.ForeignKey('judgenorm.id'))
     judge = db.relationship(JudgeNorm)
     homework = db.relationship("HomeWork", secondary=homework_prob)
+    user = db.relationship("User", secondary=prob_user)
 
     def __str__(self):
         return self.name
@@ -116,7 +124,7 @@ class Submission(db.Model):
     prob = db.relationship(Problem)
     h_id = db.Column(ForeignKey('homework.id'))
     homework = db.relationship(HomeWork)
-    score = db.Column(db.DECIMAL(10, 2))
+    score = db.Column(db.DECIMAL(10, 2), default=0)
     # source is the source file path that the student upload
     source = db.Column(db.String(100))
     # result is the result file path that the student upload
