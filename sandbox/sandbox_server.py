@@ -8,6 +8,27 @@ from .sandbox_executor import SandBoxExecutor
 class SandBoxService(object):
 
     @staticmethod
+    def local_exec(submit_id, result_path, data_path, judge_path):
+        print("Exec!!!", submit_id, result_path, data_path, judge_path)
+        if submit_id is None:
+            print("Fail!!!!")
+            return
+        submit = Submission.query.filter_by(id = submit_id).first()
+        if submit is not None:
+            db.session.status = 'judging'
+            db.session.commit()
+        else:
+            db.session.status = 'failed, system error!'
+            db.session.commit()
+            return
+        ret, score = SandBoxExecutor.execute(submit_id, result_path, data_path, judge_path)
+        submit.status = ret
+        if ret == 'success':
+            print('score', score)
+            submit.score = score
+        db.session.commit()
+
+    @staticmethod
     def run(ch):
         connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host='localhost'))
@@ -19,23 +40,7 @@ class SandBoxService(object):
         def callback(ch, method, properties, body):
             ch.basic_ack(delivery_tag = method.delivery_tag)
             submit_id , result_path, data_path, judge_path = decode(body)
-            print("Exec!!!", submit_id, result_path, data_path, judge_path)
-            if submit_id is None:
-                print("Fail!!!!")
-                return
-            submit = Submission.query.filter_by(id = submit_id).first()
-            if submit is not None:
-                db.session.status = 'judging'
-                db.session.commit()
-            else:
-                db.session.status = 'failed, system error!'
-                db.session.commit()
-                return
-            ret, score = SandBoxExecutor.execute(submit_id, result_path, data_path, judge_path)
-            submit.status = ret
-            if ret == 'success':
-                submit.score = score
-            db.session.commit()
+            SandBoxService.local_exec(submit_id , result_path, data_path, judge_path )
 
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(callback,
