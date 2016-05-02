@@ -41,7 +41,12 @@ def prob_view(hid, pid):
             flash('the source file should end with .csv, but yours are %s' % result.filename)
             return redirect(request.args.get('next') or url_for("main.index"))
         if hid != -1:
-            sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now(), status = 'pending')
+            if homework.begin_time < datetime.datetime.now() < homework.end_time:
+                sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now(), status = 'pending')
+            else:
+                flash('the homework is out of date!')
+                return redirect(request.args.get('next') or url_for("main.index"))
+
         else:
             sub = Submission(user_id = current_user.id, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now())
 
