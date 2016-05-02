@@ -68,10 +68,7 @@ def prob_view(hid, pid):
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
 
-    else:
-        flash('something wrong!')
-        print("not valid!")
-    return render_template('prob_view.html', problem=problem, form = form, hid = -1)
+    return render_template('prob_view.html', problem=problem, form = form, hid = -1, data = problem.data)
 
 
 @prob.route('/status')

@@ -1,17 +1,33 @@
 from .. import _admin, db, app
+from flask import redirect, url_for, request, flash
 from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user
 from sqlalchemy.event import listens_for
 from flask_admin import form
 from jinja2 import Markup
 from ..models import *
 import functools, os
 
-_admin.add_view(ModelView(User,  db.session, name="用户管理"))
-_admin.add_view(ModelView(TrainCamp, db.session, name="训练营管理"))
-_admin.add_view(ModelView(HomeWork, db.session, name="作业管理"))
+
+class AdminView(ModelView):
+    def is_accessible(self):
+        if not current_user.is_active or not current_user.is_authenticated:
+            return False
+        if current_user.is_admin:
+            return True
+        return False
+
+    def inaccessible_callback(self, name, **kwargs):
+        flash('you are not logined as admin!!')
+        return redirect(url_for('main.login', next = request.url))
 
 
-class JudgeView(ModelView):
+_admin.add_view(AdminView(User,  db.session, name="用户管理"))
+_admin.add_view(AdminView(TrainCamp, db.session, name="训练营管理"))
+_admin.add_view(AdminView(HomeWork, db.session, name="作业管理"))
+
+
+class JudgeView(AdminView):
     def namegen(obj, filedata):
         try:
             os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'judge', obj.name))
@@ -35,7 +51,7 @@ class JudgeView(ModelView):
     }
 
 _admin.add_view(JudgeView(JudgeNorm, db.session, name="评价指标"))
-_admin.add_view(ModelView(Problem, db.session, name="题库"))
+_admin.add_view(AdminView(Problem, db.session, name="题库"))
 
 
 @listens_for(Data, 'after_delete')
@@ -61,7 +77,7 @@ def del_path(mapper, conn, target):
             pass
 
 
-class DataView(ModelView):
+class DataView(AdminView):
     def namegen(filename, obj, filedata):
         return obj.name + "_" + filename
 
