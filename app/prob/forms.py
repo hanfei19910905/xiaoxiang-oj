@@ -1,8 +1,9 @@
 from flask_wtf import Form
-from wtforms import SubmitField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms import SubmitField, TextAreaField, FileField
+from wtforms.validators import DataRequired, Regexp
 
 
 class SubmitForm(Form):
-    source = TextAreaField('Source', validators=[DataRequired()])
+    source = FileField('Source', validators=[DataRequired()])
+    result = FileField('Result', validators=[DataRequired()])
     submit = SubmitField('Submit')

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block page_content %}
+{% import "bootstrap/wtf.html" as wtf %}
 <div class="page-header">
     <div class="container">
         <h3>{{ problem.id }}.{{ problem.name }}</h3>
@@ -47,7 +48,7 @@
                     <pre>{{ problem.sample_output }}</pre> -->
             </div>
             <div class="col-sm-4">
-                <a class="btn btn-default" href="#">Submit</a>
+                {{ wtf.quick_form(form) }}
             </div>
         </div>
     </div>

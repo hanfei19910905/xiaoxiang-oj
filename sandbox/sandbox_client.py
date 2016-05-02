@@ -10,14 +10,30 @@ class SandBoxRpcClient(object):
 
         self.channel = self.connection.channel()
 
-        self.channel.queue_declare(queue=ch, durable=True)
+        self.channel.queue_declare(queue=self.ch, durable=True)
 
-    def call(self, submit_id, user_id, time_limit, mem_limit, source):
+    def call(self, submit_id, result_path, data_path, judge_path):
 
-        rpc_body = encode(submit_id, user_id, time_limit, mem_limit, source)
-        self.channel.basic_publish(exchange='',
-                                   routing_key=self.ch,
-                                   properties=pika.BasicProperties(
-                                         delivery_mode=2,
-                                         ),
-                                   body=rpc_body)
+        rpc_body = encode(submit_id, result_path, data_path, judge_path)
+        for i in range(2):
+            try:
+                self.channel.basic_publish(exchange='',
+                                           routing_key=self.ch,
+                                           properties=pika.BasicProperties(
+                                                 delivery_mode=2,
+                                                 ),
+                                           body=rpc_body)
+                return
+            except pika.exceptions.ConnectionClosed:
+                self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+                    host='localhost'))
+
+                self.channel = self.connection.channel()
+
+                self.channel.queue_declare(queue=self.ch, durable=True)
+
+        #convert to local judge. that's a sync way!
+        from .sandbox_server import SandBoxService
+        SandBoxService.local_exec(submit_id, result_path, data_path, judge_path)
+
+

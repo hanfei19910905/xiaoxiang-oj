@@ -1,19 +1,18 @@
 import json
 
 
-def encode(submit_id, prob_id, time_limit, mem_limit, source):
+def encode(submit_id, result_path, data_path, judge_path):
     request = {
         "submit_id": submit_id,
-        "prob_id": prob_id,
-        "time_limit": time_limit,
-        "mem_limit": mem_limit,
-        "source":source,
+        "result_path": result_path,
+        "data_path": data_path,
+        "judge_path": judge_path,
     }
     return bytes(json.dumps(request), encoding='utf-8')
 
 
 def decode(body):
     request =json.loads(str(body, encoding='utf-8'))
-    if not {"submit_id", "prob_id", "time_limit", "mem_limit", "source"}.issubset(request.keys()):
+    if not {"submit_id", "result_path", "data_path", "judge_path"}.issubset(request.keys()):
         return None, None, None, None, None
-    return request["submit_id"], request["prob_id"], request["time_limit"], request["mem_limit"], request["source"]
+    return request["submit_id"], request["result_path"], request["data_path"], request["judge_path"]

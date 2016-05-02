@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
-from flask_admin.contrib import sqla
 from sqlalchemy.orm import sessionmaker
 from config import config
 
@@ -28,6 +27,9 @@ app.register_blueprint(prob_blueprint)
 
 from .homework import homework as homework_blueprint
 app.register_blueprint(homework_blueprint, url_prefix='/homework')
+
+from .download import download as download_blueprint
+app.register_blueprint(download_blueprint, url_prefix='/download')
 
 _admin = Admin(app, template_mode='bootstrap3')
 from . import admin

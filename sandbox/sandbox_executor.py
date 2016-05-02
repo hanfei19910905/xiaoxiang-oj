@@ -1,5 +1,5 @@
 import os
-import subprocess
+from app import app
 
 
 class SandBoxExecutor(object):
@@ -11,40 +11,37 @@ class SandBoxExecutor(object):
         return user_output == std_output
 
     @staticmethod
-    def execute(submit_id, time_limit, mem_limit, source, input, output):
+    def execute(submit_id, result_path, data_path, judge_path):
         box_id = submit_id % 100
         init_cmd = 'isolate --init --box-id=%d' % box_id
         print("Exec init_cmd: ", init_cmd)
         ret = os.system(init_cmd)
         if ret != 0:
             print("Init Error")
-            return -1
+            return "system error! create sandbox error! please submit again!", None
         box_path = '/tmp/box/' + str(box_id) + '/box/'
-        source_path = box_path + 'tmp.py'
-        file_fd = open(source_path, 'w')
-        file_fd.write(source)
-        file_fd.close()
+        os.system("\cp %s %s" % (result_path, os.path.join(box_path, 'result.csv')))
+        os.system("\cp %s %s" % (data_path, os.path.join(box_path, 'data.csv')))
+        os.system("\cp %s %s" % (judge_path, os.path.join(box_path, 'judge.py')))
+        print('PYPY', app.config['PY_PATH'])
+        os.system("\cp %s %s" % (app.config['PY_PATH'], os.path.join(box_path, 'main.py')))
+        os.system("touch %s" % os.path.join(box_path, '__init__.py'))
 
-        input_path = box_path + 'tmp_input'
-        file_fd = open(input_path, 'w')
-        file_fd.write(input)
-        file_fd.close()
-
-        exec_cmd = '/usr/local/bin/isolate -e -p=1 --box-id=' + str(box_id) + ' --run /usr/bin/python tmp.py' + ' -t ' + str(time_limit / 1000.0) + " -i tmp_input -o tmp_output --meta=run.log"
+        exec_cmd = '/usr/local/bin/isolate -e --box-id=' + str(box_id) + ' --run /usr/bin/python main.py' + " -t 60 -o res.log --meta=run.log"
         print("Exec exec_cmd: ", exec_cmd)
         ret_code = os.system(exec_cmd)
-        #ret_code = popen.wait()
         if ret_code != 0:
             print ("Exec Error")
-            return -1
+            return "Judge Exec error!!", None
 
-        output_path = box_path + 'tmp_output'
+        output_path = os.path.join( box_path , 'res.log')
         file_fd = open(output_path, 'r')
-        user_output = file_fd.read()
+        user_output = file_fd.readline()
+        try:
+            score = float(user_output)
+        except ValueError:
+            return user_output, None
 
-        ret_code = SandBoxExecutor.compare(user_output, output)
-        if ret_code:
-            return 1
-        return 2
+        return 'success', score
 
 

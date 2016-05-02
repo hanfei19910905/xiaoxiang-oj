@@ -13,20 +13,18 @@
             <th>Time</th>
             <th>Source</th>
             <th>Status</th>
+            <th>Score</th>
         </thead>
         <tbody>
             {% for submit in slist %}
             <tr>
                 <td>{{ submit.id }}</td>
                 <td>{{ submit.user.name }}</td>
-                <td><a href="{{ url_for('prob.prob_view', cid=submit.prob.contest.id, pid=submit.prob.show_id) }}">{{ submit.prob.show_id }}</a></td>
+                <td><a href="{{ url_for('prob.prob_view', hid=chid, pid=submit.prob.id) }}">{{ submit.prob.show_id }}</a></td>
                 <td>{{ submit.time }}</td>
-                {% if submit.user.id == cuid %}
-                    <td><a href="{{ url_for('prob.code_view', sid=submit.id) }}">Code</a></td>
-                {% else %}
-                    <td>Code</td>
-                {% endif %}
+                <td>Code</td>
                 <td>{{ submit.status }}</td>
+                <td>{{ submit.score }}</td>
             </tr>
             {% endfor %}
         </tbody>

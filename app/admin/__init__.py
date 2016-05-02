@@ -1,1 +1,1 @@
-from . import view
+from . import views
