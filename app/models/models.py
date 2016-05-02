@@ -15,12 +15,16 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(200), unique=True)
     name = db.Column(db.String(200))
     password = db.Column(db.String(200))
-    salt = db.Column(String(200))
+    salt = db.Column(db.String(200))
     camp = db.relationship("TrainCamp", secondary=camp_user)
-    #admin = BooleanField()
+    admin = db.Column(db.Boolean())
 
     def verify_password(self, password):
         return self.password == password
+
+    @property
+    def is_admin(self):
+        return self.admin
 
     def __str__(self):
         return self.name + ", " + self.email
@@ -30,7 +34,7 @@ class JudgeNorm(db.Model):
     __tablename__ = 'judgenorm'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200))
-    value = db.Column(db.DECIMAL)
+    value = db.Column(db.DECIMAL(20))
     code = db.Column(db.String(100))
 
     def  __str__(self):
@@ -112,7 +116,7 @@ class Submission(db.Model):
     prob = db.relationship(Problem)
     h_id = db.Column(ForeignKey('homework.id'))
     homework = db.relationship(HomeWork)
-    score = db.Column(db.DECIMAL)
+    score = db.Column(db.DECIMAL(20))
     # source is the source file path that the student upload
     source = db.Column(db.String(100))
     # result is the result file path that the student upload

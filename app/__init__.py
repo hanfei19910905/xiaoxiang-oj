@@ -1,10 +1,11 @@
-from flask import Flask
+from flask import Flask, request, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_admin import Admin
 from sqlalchemy.orm import sessionmaker
 from config import config
+from functools import wraps
 
 bootstrap = Bootstrap()
 
@@ -17,6 +18,17 @@ bootstrap.init_app(app)
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'main.login'
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def decorator(*args, **kwargs):
+        if current_user.is_admin:
+            return view_func(*args, **kwargs)
+        else:
+            return redirect(url_for('main.login', next = request.url))
+    return decorator
+
 
 from .main import main as main_blueprint
 app.register_blueprint(main_blueprint)
