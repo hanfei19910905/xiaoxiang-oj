@@ -9,6 +9,7 @@ camp_user = db.Table('camp_user',
     db.Column('traincamp_id', Integer, db.ForeignKey('traincamp.id'))
 )
 
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -63,8 +64,6 @@ class TrainCamp(db.Model):
     begin_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     user = db.relationship(User, secondary=camp_user)
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -80,6 +79,7 @@ class Problem(db.Model):
     __tablename__ = 'problem'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), nullable=False)
+    show_id = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(200))
     data_id = db.Column(db.ForeignKey('data.id'))
     data = db.relationship(Data)
