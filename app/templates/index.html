@@ -34,9 +34,9 @@
                     <tr>
                         <td>{{ prk[0] }}</td>
                         <td>{{ prk[1]['total'] }}</td>
-                        {% for hid in hrank[0][1]%}
+                        {% for pid in prank[0][1]%}
                         {% if pid != 'total' %}
-                        <td>{{ hrk[1][pid] }}</td>
+                        <td>{{ prk[1][pid] }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>
@@ -49,20 +49,20 @@
                 <thead>
                     <th>User</th>
                     <th>Total</th>
-                    {% for hid in prank[0][1]%}
+                    {% for hid in hrank[0][1]%}
                     {% if hid != 'total' %}
                     <th>{{ hid }}</th>
                     {% endif %}
                     {% endfor %}
                 </thead>
                 <tbody>
-                    {% for prk in prank %}
+                    {% for hrk in hrank %}
                     <tr>
-                        <td>{{ prk[0] }}</td>
-                        <td>{{ prk[1]['total'] }}</td>
-                        {% for pid in prank[0][1]%}
-                        {% if pid != 'total' %}
-                        <td>{{ prk[1][pid] }}</td>
+                        <td>{{ hrk[0] }}</td>
+                        <td>{{ hrk[1]['total'] }}</td>
+                        {% for hid in hrank[0][1]%}
+                        {% if hid != 'total' %}
+                        <td>{{ hrk[1][hid] }}</td>
                         {% endif %}
                         {% endfor %}
                     </tr>
