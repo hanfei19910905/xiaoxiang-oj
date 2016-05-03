@@ -23,6 +23,7 @@ def download_sec(filename):
 @login_required
 @admin_required
 def download_judge(filename):
+    print('filename', filename)
     return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'judge'), filename)
 
 

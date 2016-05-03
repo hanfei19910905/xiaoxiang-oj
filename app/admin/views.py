@@ -29,11 +29,7 @@ _admin.add_view(AdminView(HomeWork, db.session, name="作业管理"))
 
 class JudgeView(AdminView):
     def namegen(obj, filedata):
-        try:
-            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'judge', obj.name))
-        except os.error:
-            print('error!!')
-        return obj.name + "/judge.py"
+        return obj.name + "_judge.py"
 
     form_overrides = {
         'code': form.FileUploadField,
@@ -50,7 +46,7 @@ class JudgeView(AdminView):
         'code': _list_download_link
     }
 
-_admin.add_view(JudgeView(JudgeNorm, db.session, name="评价指标"))
+_admin.add_view(JudgeView(JudgeNorm, db.session, name="指标管理"))
 _admin.add_view(AdminView(Problem, db.session, name="题库"))
 
 

@@ -18,10 +18,10 @@ prob_user = db.Table('prob_user',
 class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(200), unique=True)
+    email = db.Column(db.String(200), unique=True, nullable=False)
     name = db.Column(db.String(200),nullable=False)
     password = db.Column(db.String(200),nullable=False)
-    salt = db.Column(db.String(200),nullable=False)
+    salt = db.Column(db.String(200),nullable=False, default='salt')
     camp = db.relationship("TrainCamp", secondary=camp_user)
     problem=db.relationship('Problem', secondary=prob_user, backref=db.backref('prob_set', lazy='dynamic'))
     admin = db.Column(db.Boolean(),nullable=False)
@@ -102,7 +102,7 @@ class Problem(db.Model):
 class HomeWork(db.Model):
     __tablename__ = 'homework'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    camp_id = db.Column(db.ForeignKey('traincamp.id'))
+    camp_id = db.Column(db.ForeignKey('traincamp.id'), nullable=False)
     camp = db.relationship(TrainCamp)
     name = db.Column(db.String(200),nullable=False)
     #prob_count = IntegerField()
