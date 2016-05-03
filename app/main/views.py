@@ -5,7 +5,7 @@ from .. import app
 from .. import Session
 from .. import db
 from .forms import LoginForm
-from ..models import User, Submission, Problem, HomeWork
+from ..models import User, Submission, Problem, HomeWork, TrainCamp
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 
@@ -27,6 +27,8 @@ def login():
 def index():
     sub_list = db.session.query(func.max(Submission.score), Submission.user_id, Submission.prob_id) \
                .group_by(Submission.prob_id, Submission.user_id).all()
+    if len(sub_list) <= 0:
+        return render_template('index.html')
     plist = db.session.query(Problem).all()
     prank = dict()
     for sub in sub_list:
@@ -42,20 +44,35 @@ def index():
     sub_list2 = db.session.query(func.max(Submission.score), \
         Submission.prob_id, Submission.h_id, Submission.user_id)\
         .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()
+    crank = dict()
+    clist = db.session.query(TrainCamp).all()
     hrank = dict()
     hlist = db.session.query(HomeWork).all()
     for sub in sub_list2:
+        if sub.h_id is None:
+            continue
         uname = User.query.filter_by(id=sub[3]).one().name
         if uname not in hrank:
             hrank[uname] = dict()
             for h in hlist:
                 hrank[uname][h.id] = 0.0
             hrank[uname]['total'] = 0.0
+        if uname not in crank:
+            crank[uname] = dict()
+            for c in clist:
+                crank[uname][c.id] = 0.0
+            crank[uname]['total'] = 0.0
         hrank[uname][sub[2]] += float(sub[0])
         hrank[uname]['total'] += float(sub[0])
-    hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
-    return render_template('index.html', prank=prlist, hrank=hrlist)
-
+        crank[uname]['total'] += float(sub[0])
+        home = HomeWork.query.filter_by(id = sub.h_id).one()
+        crank[uname][home.camp_id] += float(sub[0])
+    try:
+        hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
+        crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
+    except KeyError:
+        return render_template('index.html', prank=prlist)
+    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist)
 
 @main.route('/')
 def index1():

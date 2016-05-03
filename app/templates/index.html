@@ -19,6 +19,7 @@
     <!-- Tab panes -->
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="problem">
+        {% if prank %}
             <table class="table table-striped">
                 <thead>
                     <th>User</th>
@@ -43,8 +44,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+        <p>There are not submissions.</p>
+        {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane" id="homework">
+        {% if hrank %}
             <table class="table table-striped">
                 <thead>
                     <th>User</th>
@@ -69,8 +74,40 @@
                     {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+            <p>There are not home submissions</p>
+        {% endif %}
         </div>
-        <div role="tabpanel" class="tab-pane" id="camp">...</div>
+        <div role="tabpanel" class="tab-pane" id="camp">
+        {% if crank %}
+            <table class="table table-striped">
+                <thead>
+                    <th>User</th>
+                    <th>Total</th>
+                    {% for cid in crank[0][1]%}
+                    {% if cid != 'total' %}
+                    <th>{{ cid }}</th>
+                    {% endif %}
+                    {% endfor %}
+                </thead>
+                <tbody>
+                    {% for crk in crank %}
+                    <tr>
+                        <td>{{ crk[0] }}</td>
+                        <td>{{ crk[1]['total'] }}</td>
+                        {% for cid in crank[0][1]%}
+                        {% if cid != 'total' %}
+                        <td>{{ crk[1][cid] }}</td>
+                        {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>There are not camp submissions</p>
+        {% endif %}
+        </div>
     </div>
 </div>
 
