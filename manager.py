@@ -12,6 +12,9 @@ def init_db():
     "Initial Database"
     db.drop_all()
     db.create_all()
+    admin = models.User(email = 'admin@admin.com', name= 'admin', admin = True, password = '123456')
+    db.session.add(admin)
+    db.session.commit()
 
 @manager.command
 def sandbox_service(ch):

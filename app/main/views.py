@@ -5,7 +5,7 @@ from .. import app
 from .. import Session
 from .. import db
 from .forms import LoginForm
-from ..models import User, Submission, Problem, HomeWork, TrainCamp
+from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 
@@ -25,21 +25,20 @@ def login():
 
 @main.route('/index')
 def index():
-    sub_list = db.session.query(func.max(Submission.score), Submission.user_id, Submission.prob_id) \
-               .group_by(Submission.prob_id, Submission.user_id).all()
+    sub_list = ProbUserStatic.query.all()
     if len(sub_list) <= 0:
         return render_template('index.html')
     plist = db.session.query(Problem).all()
     prank = dict()
     for sub in sub_list:
-        uname = User.query.filter_by(id = sub[1]).one().name
+        uname = User.query.filter_by(id = sub.user_id).one().name
         if uname not in prank:
             prank[uname] = dict()
             for prob in plist:
-                prank[uname][prob.id] = 0
-            prank[uname]['total'] = 0.0
-        prank[uname][sub[2]] = float(sub[0])
-        prank[uname]['total'] += float(sub[0])
+                prank[uname][prob.id] = '没有得分'
+            prank[uname]['total'] = 0
+        prank[uname][sub.prob_id] = sub.score
+        prank[uname]['total'] += sub.score
     prlist = sorted(prank.items(), key=lambda d:d[1]['total'], reverse=True)
     sub_list2 = db.session.query(func.max(Submission.score), \
         Submission.prob_id, Submission.h_id, Submission.user_id)\
@@ -72,7 +71,7 @@ def index():
         crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
     except KeyError:
         return render_template('index.html', prank=prlist)
-    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist)
+    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist, plist = plist, hlist = hlist, clist = clist)
 
 @main.route('/')
 def index1():

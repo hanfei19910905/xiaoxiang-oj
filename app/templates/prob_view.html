@@ -49,8 +49,8 @@
                     <pre>{{ problem.sample_output }}</pre> -->
             </div>
             <div class="col-sm-4">
-                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.id + '_train')}}">下载训练集</a>
-                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.id + '_test1')}}">下载测试集</a>
+                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
+                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
                 {{ wtf.quick_form(form) }}
             </div>
         </div>

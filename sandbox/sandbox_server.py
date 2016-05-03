@@ -1,5 +1,5 @@
 import pika
-from app.models import Submission
+from app.models import Submission, ProbUserStatic
 from app import db
 from .utils import decode
 from .sandbox_executor import SandBoxExecutor
@@ -26,6 +26,12 @@ class SandBoxService(object):
         if ret == 'success':
             print('score', score)
             submit.score = score
+            static = ProbUserStatic.query.filter_by(user_id = submit.user_id).filter_by(prob_id = submit.prob_id).first()
+            if static is None:
+                static = ProbUserStatic(user_id = submit.user_id, prob_id = submit.prob_id, score = score)
+                db.session.add(static)
+            elif static.score < score:
+                static.score = score
         db.session.commit()
 
     @staticmethod

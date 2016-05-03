@@ -24,10 +24,8 @@
                 <thead>
                     <th>User</th>
                     <th>Total</th>
-                    {% for pid in prank[0][1]%}
-                    {% if pid != 'total' %}
-                    <th>{{ pid }}</th>
-                    {% endif %}
+                    {% for prob in plist %}
+                    <th>{{ prob.name }}</th>
                     {% endfor %}
                 </thead>
                 <tbody>
@@ -54,10 +52,8 @@
                 <thead>
                     <th>User</th>
                     <th>Total</th>
-                    {% for hid in hrank[0][1]%}
-                    {% if hid != 'total' %}
-                    <th>{{ hid }}</th>
-                    {% endif %}
+                    {% for prob in hlist %}
+                    <th>{{ prob.name }}</th>
                     {% endfor %}
                 </thead>
                 <tbody>
@@ -84,10 +80,8 @@
                 <thead>
                     <th>User</th>
                     <th>Total</th>
-                    {% for cid in crank[0][1]%}
-                    {% if cid != 'total' %}
-                    <th>{{ cid }}</th>
-                    {% endif %}
+                    {% for prob in clist %}
+                    <th>{{ prob.name }}</th>
                     {% endfor %}
                 </thead>
                 <tbody>

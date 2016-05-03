@@ -27,7 +27,7 @@ class SandBoxExecutor(object):
         os.system("\cp %s %s" % (app.config['PY_PATH'], os.path.join(box_path, 'main.py')))
         os.system("touch %s" % os.path.join(box_path, '__init__.py'))
 
-        exec_cmd = '/usr/local/bin/isolate -e --box-id=' + str(box_id) + ' --run /usr/bin/python main.py' + " -t 60 -o res.log --meta=run.log"
+        exec_cmd = '/usr/local/bin/isolate -e --box-id=' + str(box_id) + ' --run /usr/bin/python main.py' + " -t 60 -o res.log"
         print("Exec exec_cmd: ", exec_cmd)
         ret_code = os.system(exec_cmd)
         if ret_code != 0:
