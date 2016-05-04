@@ -27,7 +27,6 @@ def prob_view(hid, pid):
     for home in home_list:
         print (home.id, hid)
         if int(home.id) == hid:
-            print ('assgin')
             homework = home
     form = SubmitForm()
     print(problem, homework, home_list)

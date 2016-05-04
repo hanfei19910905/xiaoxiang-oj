@@ -108,3 +108,19 @@ class DataView(AdminView):
     }
 _admin.add_view(DataView(Data, db.session, name="数据集管理"))
 
+
+class SubView(AdminView):
+    can_delete = False
+    can_create = False
+    page_size = 50
+    can_edit = False
+    column_filters = ['user.name', 'homework.name', 'prob.name', 'status']
+
+    def _show_result(view, context, model, name):
+
+        return Markup('<a data-toggle="modal" href="/download/show/%s/%s" data-target="#myModal">%s</a>' % ( str(model.id), "source.py", model.source))
+    column_formatters= {
+        'source': _show_result,
+    }
+
+_admin.add_view(SubView(Submission, db.session, name="提交记录查看"))

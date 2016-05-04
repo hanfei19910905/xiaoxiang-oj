@@ -6,32 +6,6 @@
         <h2>{{ problem.name }}</h2>
         <p><b>author:</b>{{ problem.author.name }}</p>
     </div>
-<!--     <div class="container">
-        <div class="col-lg-6">
-            <table>
-                <tr>
-                    <td><strong>Time Limit: </strong></td>
-                    <td>{{ problem.time_limit }}s</td>
-                </tr>
-                <tr>
-                    <td><strong>Total Submissions: </strong></td>
-                    <td>0</td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-lg-6">
-            <table>
-                <tr>
-                    <td><strong>Memory Limit: </strong></td>
-                    <td>{{ problem.mem_limit }}MB</td>
-                </tr>
-                <tr>
-                    <td><strong>Accepted: </strong></td>
-                    <td>0</td>
-                </tr>
-            </table>
-        </div>
-    </div> -->
 </div>
 <div class="page-content">
     <div class="container">
@@ -39,14 +13,6 @@
             <div class="col-sm-8">
                     <p class="lead">Description</p>
                     <div class="well">{{ problem.description | safe }}</div>
-                    <!-- <p class="lead">Input</p>
-                    <div class="well">{{ problem.input }}</div>
-                    <p class="lead">Output</p>
-                    <div class="well">{{ problem.output }}</div>
-                    <p class="lead">Sample Input</p>
-                    <pre>{{ problem.sample_input }}</pre>
-                    <p class="lead">Sample Output</p>
-                    <pre>{{ problem.sample_output }}</pre> -->
             </div>
             <div class="col-sm-4">
                 <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
