@@ -40,16 +40,33 @@ def download_sub(sid, filename):
 @download.route('/show/<sid>')
 @login_required
 def code_show(sid):
-    filename ='source.py'
     sub = Submission.query.filter_by(id = sid).first()
     if sub is not None:
         if not current_user.is_admin or current_user.id != sub.user.id:
             flash('你没有权限查看这个提交！')
             return redirect('/status')
-        path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, filename)
-        fd = open(path, 'r')
-        content = fd.read()
-        return render_template('code_view.html', code = content, user = sub.user, prob = sub.prob)
+        p_list = []
+        id = 0
+        print('source type', sub.source)
+        if sub.source == 'py':
+            filename ='source.py'
+            path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, filename)
+            fd = open(path, 'r')
+            content = fd.read()
+            return render_template('code_view.html', code_list = ['source.py', '0', content], user = sub.user, prob = sub.prob)
+        else:
+            for parent, dir, filenames in os.walk(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, 'problem')):
+                print('parent', parent)
+                for filename in filenames:
+                    print('filename: ', filename)
+                    if filename[-3:] == '.py':
+                        path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, 'problem', filename)
+                        fd = open(path, 'r')
+                        content = fd.read()
+                        id+=1
+                        p_list.append([filename, str(id), content])
+                break
+            return render_template('code_view.html', code_list = p_list, user = sub.user, prob = sub.prob)
     flash('没有找到这个提交!')
     return redirect("/admin/submission/")
 

@@ -16,6 +16,8 @@ def prob_set():
     return render_template('prob_list.html', plist=plist, active = 'problem')
 
 
+
+
 @prob.route('/problem_set/<hid>/<pid>', methods = ['GET', 'POST'])
 @login_required
 def prob_view(hid, pid):
@@ -31,31 +33,40 @@ def prob_view(hid, pid):
     form = SubmitForm()
     print(problem, homework, home_list)
     if form.validate_on_submit() and problem is not None and (homework is not None or hid == -1):
+
         source = form.source.data
-        if len(source.filename) < 3 or source.filename[-3:] != '.py' :
-            flash('the source file should end with .py, but yours are %s' % source.filename)
-            return redirect(request.args.get('next') or url_for("main.index"))
+        src_ext = source.filename.rsplit('.', 1)[-1]
         result = form.result.data
-        if len(result.filename) < 4 or result.filename[-4:] != '.csv' :
-            flash('the source file should end with .csv, but yours are %s' % result.filename)
-            return redirect(request.args.get('next') or url_for("main.index"))
+        res_ext = result.filename.rsplit('.', 1)[-1]
         if hid != -1:
             if homework.begin_time < datetime.datetime.now() < homework.end_time:
-                sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now(), status = 'pending')
+                sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = src_ext, result = res_ext, time = datetime.datetime.now(), status = 'pending')
             else:
                 flash('the homework is out of date!')
                 return redirect(request.args.get('next') or url_for("main.index"))
 
         else:
-            sub = Submission(user_id = current_user.id, prob_id = pid, source = source.filename, result = result.filename, time = datetime.datetime.now())
+            sub = Submission(user_id = current_user.id, prob_id = pid, source = src_ext, result = res_ext, time = datetime.datetime.now())
 
         db.session.add(sub)
         db.session.commit()
         try:
-            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id)))
-            source.save(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'source.py'))
+            submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id))
+            os.makedirs(submission_path)
+            print (submission_path)
+            if src_ext =='py':
+                source.save(os.path.join(submission_path, 'source.py'))
+            else:
+                source.save(os.path.join(submission_path, source.filename))
+                cmd= "unzip %s -d %s" % (os.path.join(submission_path, source.filename), submission_path)
+                ret = os.system(cmd)
+                if ret != 0 or not os.path.exists(os.path.join(submission_path, 'problem')):
+                    flash('unzip failed!'  + cmd)
+                    db.session.delete(sub)
+                    db.session.commit()
+                    return redirect(request.args.get('next') or url_for("main.index"))
         except os.error:
-            flash('save source file failed!')
+            flash('save source file failed! err is ', os.error.strerror)
             db.session.delete(sub)
             db.session.commit()
             return redirect(request.args.get('next') or url_for("main.index"))
@@ -81,9 +92,3 @@ def prob_view(hid, pid):
 def status():
     submission_set = Submission.query.filter_by(user_id = current_user.get_id()).order_by(Submission.id.desc()).all()
     return render_template("status.html", slist = submission_set, active='status')
-
-# @prob.route('/status/<sid>/code')
-# @login_required
-# def code_view(sid):
-#     submission = Submission.select().where(Submission.id == sid).get()
-#     return render_template("code_view.html", submit=submission)
