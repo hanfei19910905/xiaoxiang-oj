@@ -20,9 +20,13 @@
             <tr>
                 <td>{{ submit.id }}</td>
                 <td>{{ submit.user.name }}</td>
-                <td><a href="{{ url_for('prob.prob_view', hid=chid, pid=submit.prob.id) }}">{{ submit.prob.name }}</a></td>
+                {% if submit.h_id is none %}
+                <td><a href="{{ url_for('prob.prob_view', hid='-1', pid=submit.prob.id) }}">{{ submit.prob.name }}</a></td>
+                {% else %}
+                <td><a href="{{ url_for('prob.prob_view', hid=submit.h_id, pid=submit.prob.id) }}">{{ submit.prob.name }}</a></td>
+                {% endif %}
                 <td>{{ submit.time }}</td>
-                <td>Code</td>
+                <td><a data-toggle="modal" href="{{url_for('download.code_show', sid = submit.id)}}" data-target="#myModal">查看代码</a></td>
                 <td>{{ submit.status }}</td>
                 <td>{{ submit.score }}</td>
             </tr>

@@ -1,7 +1,7 @@
 from flask import send_from_directory, flash, render_template, redirect
-from flask_login import login_required
+from flask_login import login_required, current_user
 from . import download
-from ..models import Submission
+from ..models import Submission, Problem
 from .. import app, admin_required
 import os
 
@@ -36,15 +36,30 @@ def download_sub(sid, filename):
     flash('没有找到这个提交!')
     return redirect("/admin/submission/")
 
-@download.route('/show/<sid>/<filename>')
+
+@download.route('/show/<sid>')
 @login_required
-def code_show(sid, filename):
+def code_show(sid):
+    filename ='source.py'
     sub = Submission.query.filter_by(id = sid).first()
-    print("Get!")
     if sub is not None:
+        if not current_user.is_admin or current_user.id != sub.user.id:
+            flash('你没有权限查看这个提交！')
+            return redirect('/status')
         path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, filename)
         fd = open(path, 'r')
         content = fd.read()
         return render_template('code_view.html', code = content, user = sub.user, prob = sub.prob)
     flash('没有找到这个提交!')
     return redirect("/admin/submission/")
+
+
+@download.route('/show_prob/<pid>')
+@login_required
+def code_prob(pid):
+    prob = Problem.query.filter_by(id = pid).first()
+    print("Get!")
+    if prob is not None:
+        return render_template('show_prob.html',prob = prob)
+    flash('没有找到这个提交!')
+    return redirect("/admin/problem/")

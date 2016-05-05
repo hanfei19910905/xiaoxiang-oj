@@ -17,11 +17,27 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+                {% if active is equalto 'index' %}
+                <li class = 'active'><a href="/index">首页</a></li>
+                {% else %}
                 <li><a href="/index">首页</a></li>
+                {% endif %}
+                {% if active is equalto 'homework' %}
+                <li class = 'active'><a href="/homework/list">作业</a></li>
+                {% else %}
                 <li><a href="/homework/list">作业</a></li>
+                {% endif %}
+                 {% if active is equalto 'problem' %}
+                <li class = 'active'><a href="/problem_set">题库</a></li>
+                {% else %}
                 <li><a href="/problem_set">题库</a></li>
+                {% endif %}
                 {% if current_user.is_authenticated %}
+                {% if active is equalto 'status' %}
+                <li class = 'active'><a href="/status">我的提交</a></li>
+                {% else %}
                 <li><a href="/status">我的提交</a></li>
+                {% endif %}
                 {% endif %}
                 {% if current_user.is_admin %}
                 <li><a href="/admin">管理模块</a></li>
@@ -32,11 +48,23 @@
             <li><a href="#">{{ current_user.name }}</a></li>
             <li><a href="{{ url_for('main.logout') }}">Sign Out</a></li>
             {% else %}
-            <li><a href="{{ url_for('main.login') }}">Sign In</a></li>
+                {% if active is equalto 'Login' %}
+                <li class = 'active'><a href="{{ url_for('main.login') }}" >Sign In</a></li>
+                {% else %}
+                <li><a href="{{ url_for('main.login') }}">Sign In</a></li>
+                {% endif %}
             {% endif %}
             </ul>
         </div>
     </div>
+</div>
+<link href="{{ url_for('static', filename='bootstrap-wysihtml5-0.0.2.css')}}" rel="stylesheet">
+<div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+    </div>
+  </div>
 </div>
 {% endblock %}
 

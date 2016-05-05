@@ -4,6 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from sqlalchemy.event import listens_for
 from flask_admin import form
+from wtforms import ValidationError
 from jinja2 import Markup
 from ..models import *
 import functools, os
@@ -23,8 +24,24 @@ class AdminView(ModelView):
 
 
 _admin.add_view(AdminView(User,  db.session, name="用户管理"))
-_admin.add_view(AdminView(TrainCamp, db.session, name="训练营管理"))
-_admin.add_view(AdminView(HomeWork, db.session, name="作业管理"))
+
+
+def _validate (form, field):
+    if form.begin_time is not None and form.end_time is not None:
+        print ('time!!',form.begin_time.data, form.end_time.data)
+        if form.begin_time.data >= form.end_time.data:
+            raise ValidationError('begin_time must be early than end_time!!')
+
+
+class TrainCampView(AdminView):
+
+    form_args = {
+        'begin_time':{'validators': [_validate]},
+        'end_time':{'validators': [_validate]},
+    }
+
+_admin.add_view(TrainCampView(TrainCamp, db.session, name="训练营管理"))
+_admin.add_view(TrainCampView(HomeWork, db.session, name="作业管理"))
 
 
 class JudgeView(AdminView):
@@ -47,7 +64,19 @@ class JudgeView(AdminView):
     }
 
 _admin.add_view(JudgeView(JudgeNorm, db.session, name="指标管理"))
-_admin.add_view(AdminView(Problem, db.session, name="题库"))
+
+
+class ProbView(AdminView):
+    form_excluded_columns = ['homework']
+    page_size = 50
+    def _show_result(view, context, model, name):
+
+        return Markup('<a data-toggle="modal" href="/download/show_prob/%s" data-target="#myModal">Show Problem</a>' % str(model.id))
+    column_formatters= {
+        'description': _show_result,
+    }
+
+_admin.add_view(ProbView(Problem, db.session, name="题库"))
 
 
 @listens_for(Data, 'after_delete')
@@ -118,7 +147,7 @@ class SubView(AdminView):
 
     def _show_result(view, context, model, name):
 
-        return Markup('<a data-toggle="modal" href="/download/show/%s/%s" data-target="#myModal">%s</a>' % ( str(model.id), "source.py", model.source))
+        return Markup('<a data-toggle="modal" href="/download/show/%s" data-target="#myModal">%s</a>' % ( str(model.id), model.source))
     column_formatters= {
         'source': _show_result,
     }

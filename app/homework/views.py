@@ -14,7 +14,7 @@ from sqlalchemy.orm.exc import NoResultFound
 def list_view():
     try:
         hlist = HomeWork.query.order_by(HomeWork.begin_time.desc()).all()
-        return render_template('homework_list.html', clist=hlist)
+        return render_template('homework_list.html', clist=hlist, active = 'homework')
     except NoResultFound:
         flash('什么作业都没有哦')
     return redirect(url_for('main.index'))
@@ -28,7 +28,7 @@ def contest_view(hid):
         flash("这个作业不在时间内！")
         return redirect(url_for('main.index'))
     plist = contest.problem
-    return render_template('contest_view.html', plist=plist, homework=contest)
+    return render_template('contest_view.html', plist=plist, homework=contest, active = 'homework')
 
 #
 # @homework.route('/cview/<cid>/status')

@@ -20,7 +20,7 @@ def login():
             return redirect(request.args.get('next') or url_for('main.index'))
         else:
             flash('Invalid username or password.')
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, active = 'Login')
 
 
 @main.route('/index')
@@ -70,8 +70,8 @@ def index():
         hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
         crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
     except KeyError:
-        return render_template('index.html', prank=prlist)
-    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist, plist = plist, hlist = hlist, clist = clist)
+        return render_template('index.html', prank=prlist, active= 'index')
+    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist, plist = plist, hlist = hlist, clist = clist,  active='index')
 
 @main.route('/')
 def index1():

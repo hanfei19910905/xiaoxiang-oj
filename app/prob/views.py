@@ -13,7 +13,7 @@ import datetime, os
 @prob.route('/problem_set') 
 def prob_set():
     plist = Problem.query.order_by(Problem.id).all()
-    return render_template('prob_list.html', plist=plist)
+    return render_template('prob_list.html', plist=plist, active = 'problem')
 
 
 @prob.route('/problem_set/<hid>/<pid>', methods = ['GET', 'POST'])
@@ -71,15 +71,16 @@ def prob_view(hid, pid):
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
-
-    return render_template('prob_view.html', problem=problem, form = form, hid = -1, data = problem.data)
+    if hid == -1:
+        return render_template('prob_view.html', problem=problem, form = form, hid = -1, data = problem.data, active='problem')
+    return render_template('prob_view.html', problem=problem, form = form, hid = -1, data = problem.data, active='homework')
 
 
 @prob.route('/status')
 @login_required
 def status():
     submission_set = Submission.query.filter_by(user_id = current_user.get_id()).order_by(Submission.id.desc()).all()
-    return render_template("status.html", slist = submission_set, chid = int(current_user.get_id()))
+    return render_template("status.html", slist = submission_set, active='status')
 
 # @prob.route('/status/<sid>/code')
 # @login_required
