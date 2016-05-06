@@ -1,0 +1,11 @@
+{% extends 'admin/model/list.html' %}
+{% block list_row scoped %}
+{{super()}}
+<div class="modal fade " id="{{row.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
+{% endblock %}

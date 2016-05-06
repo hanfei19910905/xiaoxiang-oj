@@ -69,9 +69,11 @@ _admin.add_view(JudgeView(JudgeNorm, db.session, name="指标管理"))
 class ProbView(AdminView):
     form_excluded_columns = ['homework']
     page_size = 50
+    list_template = 'admin/myList.html'
+    
     def _show_result(view, context, model, name):
 
-        return Markup('<a data-toggle="modal" href="/download/show_prob/%s" data-target="#myModal">Show Problem</a>' % str(model.id))
+        return Markup('<a data-toggle="modal" href="/download/show_prob/%s" data-target="#%s">Show Problem</a>' % (str(model.id), str(model.id)))
     column_formatters= {
         'description': _show_result,
     }
@@ -144,10 +146,12 @@ class SubView(AdminView):
     page_size = 50
     can_edit = False
     column_filters = ['user.name', 'homework.name', 'prob.name', 'status']
+    list_template = 'admin/myList.html'
 
     def _show_result(view, context, model, name):
 
-        return Markup('<a data-toggle="modal" href="/download/show/%s" data-target="#myModal">%s</a>' % ( str(model.id), model.source))
+
+        return Markup('<a data-toggle="modal" href="/download/show/%s" data-target="#%s">显示代码</a>' % ( str(model.id),  str(model.id)))
     column_formatters= {
         'source': _show_result,
     }

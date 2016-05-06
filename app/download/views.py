@@ -40,6 +40,7 @@ def download_sub(sid, filename):
 @download.route('/show/<sid>')
 @login_required
 def code_show(sid):
+    print('come!')
     sub = Submission.query.filter_by(id = sid).first()
     if sub is not None:
         if not current_user.is_admin or current_user.id != sub.user.id:
@@ -48,13 +49,15 @@ def code_show(sid):
         p_list = []
         id = 0
         print('source type', sub.source)
-        if sub.source == 'py':
+        if sub.source[-2:] == 'py':
+            print('first')
             filename ='source.py'
             path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, filename)
             fd = open(path, 'r')
             content = fd.read()
-            return render_template('code_view.html', code_list = ['source.py', '0', content], user = sub.user, prob = sub.prob)
+            return render_template('code_view.html', code_list = [['source.py', '0', content]], user = sub.user, prob = sub.prob)
         else:
+            print('second')
             for parent, dir, filenames in os.walk(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, 'problem')):
                 print('parent', parent)
                 for filename in filenames:

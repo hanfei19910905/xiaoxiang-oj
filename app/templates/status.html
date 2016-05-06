@@ -26,10 +26,17 @@
                 <td><a href="{{ url_for('prob.prob_view', hid=submit.h_id, pid=submit.prob.id) }}">{{ submit.prob.name }}</a></td>
                 {% endif %}
                 <td>{{ submit.time }}</td>
-                <td><a data-toggle="modal" href="{{url_for('download.code_show', sid = submit.id)}}" data-target="#myModal">查看代码</a></td>
+                <td><a data-toggle="modal" href="{{url_for('download.code_show', sid = submit.id)}}" data-target="#{{submit.id|string}}">查看代码</a></td>
                 <td>{{ submit.status }}</td>
                 <td>{{ submit.score }}</td>
             </tr>
+            <div class="modal fade " id="{{submit.id|string}}" tabindex="-1" role="dialog" aria-labelledby="{{submit.id|string}}">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+
+    </div>
+  </div>
+</div>
             {% endfor %}
         </tbody>
     </table>
