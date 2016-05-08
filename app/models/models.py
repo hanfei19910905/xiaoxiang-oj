@@ -10,22 +10,36 @@ camp_user = db.Table('camp_user',
 )
 
 
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__='role'
+    name = db.Column(db.String(10), default = 'student')
+
+    def __str__(self):
+        return self.name
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(200), unique=True, nullable=False)
-    name = db.Column(db.String(200),nullable=False)
-    password = db.Column(db.String(200),nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(50),nullable=False)
+    password = db.Column(db.String(20),nullable=False)
     salt = db.Column(db.String(200),nullable=False, default='salt')
     camp = db.relationship("TrainCamp", secondary=camp_user)
-    admin = db.Column(db.Boolean(),nullable=False)
+    role_id = db.Column(db.ForeignKey("role.id"), nullable=False)
+    role = db.relationship(Role)
 
     def verify_password(self, password):
         return self.password == password
 
     @property
     def is_admin(self):
-        return self.admin
+        return self.role.name == 'admin'
+
+    @property
+    def is_teacher(self):
+        return self.role.name == 'teacher'
 
     def __str__(self):
         return self.name + ", " + self.email
@@ -37,6 +51,8 @@ class JudgeNorm(db.Model):
     name = db.Column(db.String(200),nullable=False)
     value = db.Column(db.Float)
     code = db.Column(db.String(100),nullable=False)
+    owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
+    owner = db.relationship(User)
 
     def  __str__(self):
         return self.name
@@ -45,10 +61,12 @@ class JudgeNorm(db.Model):
 class Data(db.Model):
     __tablename__ = 'data'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(200), unique=True, index=True)
+    name = db.Column(db.String(200), unique=True, index=True, nullable=False)
     train = db.Column(db.String(200),nullable=False)
     test1= db.Column(db.String(200))
     test2 = db.Column(db.String(200),nullable=False)
+    owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
+    owner = db.relationship(User)
 
     def __unicode__(self):
         return self.name
@@ -64,6 +82,7 @@ class TrainCamp(db.Model):
     begin_time = db.Column(db.DateTime,nullable=False)
     end_time = db.Column(db.DateTime,nullable=False)
     user = db.relationship(User, secondary=camp_user)
+    public = db.Column(db.Boolean, default = False)
 
     def __str__(self):
         return self.name
@@ -88,6 +107,9 @@ class Problem(db.Model):
     judge = db.relationship(JudgeNorm)
     homework = db.relationship("HomeWork", secondary=homework_prob)
 
+    ac_count = db.Column(db.Integer, default = 0)
+    submit_count = db.Column(db.Integer, default = 0)
+
     def __str__(self):
         return self.name
 
@@ -98,11 +120,12 @@ class HomeWork(db.Model):
     camp_id = db.Column(db.ForeignKey('traincamp.id'), nullable=False)
     camp = db.relationship(TrainCamp)
     name = db.Column(db.String(200),nullable=False)
-    #prob_count = IntegerField()
-    #submit_count = IntegerField()
     begin_time = db.Column(db.DateTime,nullable=False)
     end_time = db.Column(db.DateTime,nullable=False)
     problem = db.relationship("Problem", secondary=homework_prob)
+
+    owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
+    owner = db.relationship(User)
 
     def __str__(self):
         return self.name

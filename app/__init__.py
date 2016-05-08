@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
@@ -26,6 +26,18 @@ def admin_required(view_func):
         if current_user.is_admin:
             return view_func(*args, **kwargs)
         else:
+            flash("你没有权限进行这个操作！")
+            return redirect(url_for('main.login', next = request.url))
+    return decorator
+
+
+def teacher_required(view_func):
+    @wraps(view_func)
+    def decorator(*args, **kwargs):
+        if current_user.is_teacher:
+            return view_func(*args, **kwargs)
+        else:
+            flash("你没有权限进行这个操作！")
             return redirect(url_for('main.login', next = request.url))
     return decorator
 

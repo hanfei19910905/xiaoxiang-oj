@@ -30,10 +30,18 @@ def prob_view(hid, pid):
         print (home.id, hid)
         if int(home.id) == hid:
             homework = home
+            if not homework.camp.public and not current_user.is_admin :
+                valid = False
+                for user in home.camp.user:
+                    if user.id == current_user.id:
+                        valid = True
+                        break
+                if not valid:
+                    flash('你没有权限提交这个作业！')
+                    return redirect(request.args.get('next') or url_for("main.index"))
+            break
     form = SubmitForm()
-    print(problem, homework, home_list)
     if form.validate_on_submit() and problem is not None and (homework is not None or hid == -1):
-
         source = form.source.data
         src_ext = source.filename.rsplit('.', 1)[-1]
         result = form.result.data

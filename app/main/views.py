@@ -27,7 +27,7 @@ def login():
 def index():
     sub_list = ProbUserStatic.query.all()
     if len(sub_list) <= 0:
-        return render_template('index.html')
+        return render_template('index.html', active='index')
     plist = db.session.query(Problem).all()
     prank = dict()
     for sub in sub_list:

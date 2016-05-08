@@ -39,7 +39,7 @@
                 <li><a href="/status">我的提交</a></li>
                 {% endif %}
                 {% endif %}
-                {% if current_user.is_admin %}
+                {% if (current_user.is_teacher or current_user.is_admin)  %}
                 <li><a href="/admin">管理模块</a></li>
                 {% endif %}
             </ul>
