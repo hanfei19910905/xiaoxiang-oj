@@ -109,7 +109,7 @@ class JudgeView(AdminView):
     }
 
     def _list_download_link(view, context, model, name):
-        return Markup('<a href=/download/%s> download </a>' % (model.code))
+        return Markup('<a href=/download/judge/%s> download </a>' % (model.code))
 
     column_formatters = {
         'code': _list_download_link
@@ -226,7 +226,7 @@ class DataView(AdminView):
         elif name == 'test2':
             filename = model.test2
 
-        return Markup('<a href=/download/%s> download </a>' % (filename))
+        return Markup('<a href=/download/data/%s> download </a>' % (filename))
 
     column_formatters = {
         'train': _list_download_link,
