@@ -1,3 +1,4 @@
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <div class="modal-header">
     <center>
         <h4>
@@ -26,9 +27,7 @@
             {% else%}
         <div role="tabpanel" class="tab-pane" id="code_{{code[1]}}">
             {% endif %}
-            <pre>
-            {{code[2]}}
-            </pre>
+            <pre class="prettyprint">{{code[2]}}</pre>
         </div>
         {% endfor %}
     </div>

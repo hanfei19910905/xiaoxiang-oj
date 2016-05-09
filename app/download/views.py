@@ -55,6 +55,7 @@ def code_show(sid):
             path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, filename)
             fd = open(path, 'r')
             content = fd.read()
+            content = content.strip(' \t')
             return render_template('code_view.html', code_list = [['source.py', '0', content]], user = sub.user, prob = sub.prob)
         else:
             print('second')
