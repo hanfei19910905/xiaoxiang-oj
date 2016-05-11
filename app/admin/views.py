@@ -177,7 +177,20 @@ def del_path(mapper, conn, target):
             pass
 
 
+class DataInput(form.FileUploadInput):
+    empty_template = ('<input %(file)s> '
+                      '<div id="progress">'
+                      '<div class="bar" style="width: 0%%;"> </div>'
+                      '</div>')
+
+
+class DataField(form.FileUploadField):
+    widget = DataInput()
+
+
 class DataView(AdminView):
+    create_template  = 'admin/data_create.html'
+
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         id = request.args.getlist('id')[0]
@@ -189,13 +202,18 @@ class DataView(AdminView):
             return redirect('/admin')
         return AdminView.edit_view(self)
 
+    @expose('/new/', methods=('GET', 'POST'))
+    def create_view(self):
+        print('fuck!!')
+        return AdminView.create_view(self)
+
     def namegen(filename, obj, filedata):
         return obj.name + "_" + filename
 
     form_overrides = {
         'train' : form.FileUploadField,
         'test1' : form.FileUploadField,
-        'test2' : form.FileUploadField,
+        'test2' : DataField,
     }
 
     form_args = {
@@ -226,7 +244,7 @@ class DataView(AdminView):
         elif name == 'test2':
             filename = model.test2
 
-        return Markup('<a href=/download/data/%s> download </a>' % (filename))
+        return Markup('<a href=/download/%s> download </a>' % (filename))
 
     column_formatters = {
         'train': _list_download_link,

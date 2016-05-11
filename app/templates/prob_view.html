@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block page_content %}
 {% import "bootstrap/wtf.html" as wtf %}
+<link href="{{ url_for('static', filename='oj.css')}}" rel="stylesheet">
 <div class="page-header">
     <div class="container">
         <h2>{{ problem.name }}</h2>
@@ -12,14 +13,23 @@
         <div class="row">
             <div class="col-sm-8">
                     <p class="lead">Description</p>
-                    <div class="well">{{ problem.description | safe }}</div>
+                    <div class="well">{{problem.description | safe }}</div>
             </div>
             <div class="col-sm-4">
                 <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
                 <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
-                {{ wtf.quick_form(form) }}
+                <div id="progress">
+                      <div class="bar" style="width: 0%;"> </div>
+                </div>
+                {{ wtf.quick_form(form, id='fileupload') }}
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static', filename='jquery.ui.widget.js')}}" type="text/javascript"></script>
+<script src="{{url_for('static', filename='jquery.fileupload.js')}}" type="text/javascript"></script>
+<script src="{{url_for('static', filename='main.js')}}" type="text/javascript"></script>
+{% endblock%}
