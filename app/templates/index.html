@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block page_content %}
+{% import "bootstrap/wtf.html" as wtf %}
 <div class="page-header">
     <h1>Hello,
     {% if current_user.is_authenticated %}
@@ -12,98 +13,21 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#problem" aria-controls="problem" role="tab" data-toggle="tab">Problem</a></li>
-        <li role="presentation"><a href="#homework" aria-controls="profile" role="tab" data-toggle="tab">Homework</a></li>
-        <li role="presentation"><a href="#camp" aria-controls="messages" role="tab" data-toggle="tab">Train Camp</a></li>
+        <li role="presentation" class="active"><a id="ptab" href="#problem" aria-controls="problem" role="tab" data-toggle="tab">Problem</a></li>
+        <li role="presentation"><a id="htab" href="#homework" aria-controls="profile" role="tab" data-toggle="tab">Homework</a></li>
+        <li role="presentation"><a id="ctab" href="#camp" aria-controls="messages" role="tab" data-toggle="tab">Train Camp</a></li>
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="problem">
-        {% if prank %}
-            <table class="table table-striped">
-                <thead>
-                    <th>User</th>
-                    <th>Total</th>
-                    {% for prob in plist %}
-                    <th>{{ prob.name }}</th>
-                    {% endfor %}
-                </thead>
-                <tbody>
-                    {% for prk in prank %}
-                    <tr>
-                        <td>{{ prk[0] }}</td>
-                        <td>{{ prk[1]['total'] }}</td>
-                        {% for pid in prank[0][1]%}
-                        {% if pid != 'total' %}
-                        <td>{{ prk[1][pid] }}</td>
-                        {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-        <p>There are not submissions.</p>
-        {% endif %}
-        </div>
-        <div role="tabpanel" class="tab-pane" id="homework">
-        {% if hrank %}
-            <table class="table table-striped">
-                <thead>
-                    <th>User</th>
-                    <th>Total</th>
-                    {% for prob in hlist %}
-                    <th>{{ prob.name }}</th>
-                    {% endfor %}
-                </thead>
-                <tbody>
-                    {% for hrk in hrank %}
-                    <tr>
-                        <td>{{ hrk[0] }}</td>
-                        <td>{{ hrk[1]['total'] }}</td>
-                        {% for hid in hrank[0][1]%}
-                        {% if hid != 'total' %}
-                        <td>{{ hrk[1][hid] }}</td>
-                        {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>There are not home submissions</p>
-        {% endif %}
-        </div>
-        <div role="tabpanel" class="tab-pane" id="camp">
-        {% if crank %}
-            <table class="table table-striped">
-                <thead>
-                    <th>User</th>
-                    <th>Total</th>
-                    {% for prob in clist %}
-                    <th>{{ prob.name }}</th>
-                    {% endfor %}
-                </thead>
-                <tbody>
-                    {% for crk in crank %}
-                    <tr>
-                        <td>{{ crk[0] }}</td>
-                        <td>{{ crk[1]['total'] }}</td>
-                        {% for cid in crank[0][1]%}
-                        {% if cid != 'total' %}
-                        <td>{{ crk[1][cid] }}</td>
-                        {% endif %}
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>There are not camp submissions</p>
-        {% endif %}
-        </div>
+        <div role="tabpanel" class="tab-pane active" id="problem"></div>
+        <div role="tabpanel" class="tab-pane" id="homework"></div>
+        <div role="tabpanel" class="tab-pane" id="camp"></div>
     </div>
 </div>
 
 </div>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script type="text/javascript" src="{{url_for('static', filename='rank.js')}}"></script>
 {% endblock %}
