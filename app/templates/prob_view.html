@@ -16,8 +16,8 @@
                     <div class="well">{{problem.description | safe }}</div>
             </div>
             <div class="col-sm-4">
-                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
-                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
+                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train.csv')}}">下载训练集</a>
+                <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_test1.csv')}}">下载测试集</a>
                 <div id="progress">
                       <div class="bar" style="width: 0%;"> </div>
                 </div>

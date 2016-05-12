@@ -2,8 +2,9 @@ $(function () {
     $('#fileupload').fileupload({
         autoUpload: false,
         replaceFileInput: false,
+        maxChunkSize: 1000000,
         add : function(e, data) {
-            $("#submit").off('click').on('click', function () {
+            $("#submit").on('click', function () {
                 data.submit();
             });
         },

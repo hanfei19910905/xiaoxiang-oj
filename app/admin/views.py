@@ -177,6 +177,11 @@ def del_path(mapper, conn, target):
             pass
 
 
+class DataField(form.FileUploadField):
+    def populate_obj(self, obj, name):
+        setattr(obj, name, "lala.csv")
+
+
 class DataView(AdminView):
     create_template  = 'admin/data_create.html'
 
@@ -191,20 +196,66 @@ class DataView(AdminView):
             return redirect('/admin')
         return AdminView.edit_view(self)
 
+    @expose('/new/', methods=('GET', 'POST'))
+    def create_view(self):
+        if request.method == 'GET':
+            return AdminView.create_view(self)
+        print('fuck!!')
+        files = request.files
+        print(request.files)
+        key = ""
+        for _ in files.keys():
+            key = _
+        value =     files[key] # this is a Werkzeug FileStorage object
+        name = request.form['name']
+        print(name)
+        if 'Content-Range' in request.headers:
+            range_str = request.headers['Content-Range'].split(" ")[1]
+            left, right_str = range_str.split('-')
+            right, all = right_str.split('/')
+            left, right, all = int(left), int(right), int(all)
+            print(left, right, all)
+            if left == 0:
+                if Data.query.filter_by(name=name).first() is not None:
+                    flash("这个文件名已经存在！！")
+                    print('aaaa???')
+                    return ('', 400)
+                try:
+                    if key == 'test2':
+                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.csv' % (name, key)))
+                    else:
+                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.csv' % (name, key)))
+                except OSError:
+                    # Don't care if was not deleted because it does not exist
+                    pass
+            if key == 'test2' :
+                prefix = 'secret/'
+            else:
+                prefix = 'data/'
+            filename = prefix + name + "_" + key + ".csv"
+            print (filename)
+            with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'a') as f:
+                f.write(str(value.stream.read()))
+            if right + 1 == all:
+                # request.files['train'] = request.files[key]
+                # request.files['test1'] = request.files[key]
+                # request.files['test2'] = request.files[key]
+                return AdminView.create_view(self)
+            return ('', 200)
+        else:
+            return AdminView.create_view(self)
 
-    def namegen(filename, obj, filedata):
-        return obj.name + "_" + filename
 
     form_overrides = {
-        'train' : form.FileUploadField,
-        'test1' : form.FileUploadField,
-        'test2' : form.FileUploadField,
+        'train' : DataField,
+        'test1' : DataField,
+        'test2' : DataField,
     }
 
     form_args = {
-        'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train')},
-        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1')},
-        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2')},
+        'train' : {'label' : 'Train File'},
+        'test1' : {'label' : 'Test1 File'},
+        'test2' : {'label' : 'Test2 File'},
     }
 
     def on_model_change(self, form, model, is_created):
@@ -223,11 +274,11 @@ class DataView(AdminView):
     def _list_download_link(view, context, model, name):
         filename =''
         if name == 'train':
-            filename = model.train
+            filename = 'data/' + model.name + "_train"
         elif name == 'test1':
-            filename = model.test1
+            filename = 'data/' + model.name + "_test1"
         elif name == 'test2':
-            filename = model.test2
+            filename = 'secret/' + model.name + "_test2"
 
         return Markup('<a href=/download/%s> download </a>' % (filename))
 
