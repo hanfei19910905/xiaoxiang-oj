@@ -7,7 +7,7 @@ from flask_admin import form, expose
 from wtforms import ValidationError
 from jinja2 import Markup
 from ..models import *
-import functools, os
+import functools, os, json
 
 
 class AdminView(ModelView):
@@ -177,17 +177,6 @@ def del_path(mapper, conn, target):
             pass
 
 
-class DataInput(form.FileUploadInput):
-    empty_template = ('<input %(file)s> '
-                      '<div id="progress">'
-                      '<div class="bar" style="width: 0%%;"> </div>'
-                      '</div>')
-
-
-class DataField(form.FileUploadField):
-    widget = DataInput()
-
-
 class DataView(AdminView):
     create_template  = 'admin/data_create.html'
 
@@ -202,10 +191,6 @@ class DataView(AdminView):
             return redirect('/admin')
         return AdminView.edit_view(self)
 
-    @expose('/new/', methods=('GET', 'POST'))
-    def create_view(self):
-        print('fuck!!')
-        return AdminView.create_view(self)
 
     def namegen(filename, obj, filedata):
         return obj.name + "_" + filename
@@ -213,7 +198,7 @@ class DataView(AdminView):
     form_overrides = {
         'train' : form.FileUploadField,
         'test1' : form.FileUploadField,
-        'test2' : DataField,
+        'test2' : form.FileUploadField,
     }
 
     form_args = {

@@ -1,10 +1,13 @@
 {% extends 'admin/model/create.html' %}
 {% block create_form %}
+<div id="progress">
+        <div class="bar" style="width: 0%;"> </div>
+    </div>
 <form id="fileupload" action method="POST" enctype="multipart/form-data" role="form">
     {{ lib.render_form_fields(form, form_opts=form_opts) }}
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10 sumbit-row">
-    <input id = "submit" type="submit" class="btn btn-primary start" value="Submit">
+    <input id = "submit" class="btn btn-primary start" value="Submit">
             </div>
     </div>
 </form>
