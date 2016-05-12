@@ -1,30 +1,26 @@
-{% extends "base.html" %}
-{% block page_content %}
-<div class="page-header">
-    <h2>Ranklist</h2>
-</div>
-<div class="page-content">
-    <table class="table table-striped table-bordered">
+{% if prank %}
+    <table class="table table-striped">
         <thead>
             <th>User</th>
-            <th>AC</th>
-            <th>Time</th>
-            {% for problem in plist %}
-            <th>{{ problem.show_id }}</th>
+            <th>Total</th>
+            {% for prob in plist %}
+            <th>{{ prob.name }}</th>
             {% endfor %}
         </thead>
         <tbody>
-            {% for rank in res %}
+            {% for prk in prank %}
             <tr>
-                <td>{{ rank[0] }}</td>
-                <td>{{ rank[1]['ac_cnt'] }}</td>
-                <td>{{ rank[1]['time'] }}</td>
-                {% for problem in plist %}
-                <td>{{ rank[1]['prob'][problem.show_id] }}</td>
+                <td>{{ prk[0] }}</td>
+                <td>{{ prk[1]['total'] }}</td>
+                {% for pid in prank[0][1]%}
+                {% if pid != 'total' %}
+                <td>{{ prk[1][pid] }}</td>
+                {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-</div>
-{% endblock %}
+{% else %}
+<p>There are not submissions.</p>
+{% endif %}

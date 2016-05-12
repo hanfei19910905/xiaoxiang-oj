@@ -25,9 +25,25 @@ def login():
 
 @main.route('/index')
 def index():
+    return render_template('index.html', active='index')
+
+@main.route('/')
+def index1():
+    return redirect(url_for('main.index'))
+
+
+@main.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('main.index'))
+
+@main.route('/rank/<rname>', methods=['GET', 'POST'])
+def get_rank(rname=None):
     sub_list = ProbUserStatic.query.all()
     if len(sub_list) <= 0:
-        return render_template('index.html', active='index')
+        return render_template('ranklist.html')
     plist = db.session.query(Problem).all()
     prank = dict()
     for sub in sub_list:
@@ -43,10 +59,12 @@ def index():
     sub_list2 = db.session.query(func.max(Submission.score), \
         Submission.prob_id, Submission.h_id, Submission.user_id)\
         .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()
-    crank = dict()
     clist = db.session.query(TrainCamp).all()
-    hrank = dict()
     hlist = db.session.query(HomeWork).all()
+    if len(sub_list2) <= 0:
+        return render_template('ranklist.html')
+    crank = dict()
+    hrank = dict()
     for sub in sub_list2:
         if sub.h_id is None:
             continue
@@ -66,24 +84,19 @@ def index():
         crank[uname]['total'] += float(sub[0])
         home = HomeWork.query.filter_by(id = sub.h_id).one()
         crank[uname][home.camp_id] += float(sub[0])
-    try:
-        hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
-        crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
-    except KeyError:
-        return render_template('index.html', prank=prlist, active= 'index')
-    return render_template('index.html', prank=prlist, hrank=hrlist, crank=crlist, plist = plist, hlist = hlist, clist = clist,  active='index')
-
-@main.route('/')
-def index1():
-    return redirect(url_for('main.index'))
-
-
-@main.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('You have been logged out.')
-    return redirect(url_for('main.index'))
+    res = None
+    hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
+    crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
+    if rname == 'prob':
+        res = prlist
+        rlist = plist
+    elif rname == 'home':
+        res = hrlist
+        rlist = hlist
+    else:
+        res = crlist
+        rlist = clist
+    return render_template('ranklist.html', prank=res, plist=rlist)
 
 from .. import login_manager
 
