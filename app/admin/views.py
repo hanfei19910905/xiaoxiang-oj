@@ -206,7 +206,7 @@ class DataView(AdminView):
         key = ""
         for _ in files.keys():
             key = _
-        value =     files[key] # this is a Werkzeug FileStorage object
+        value = files[key] # this is a Werkzeug FileStorage object
         name = request.form['name']
         print(name)
         if 'Content-Range' in request.headers:
@@ -216,7 +216,12 @@ class DataView(AdminView):
             left, right, all = int(left), int(right), int(all)
             print(left, right, all)
             if left == 0:
-                if Data.query.filter_by(name=name).first() is not None:
+                if name is None or name == "":
+                    flash(" 文件名不可以为空！！")
+                    print('aaaa???')
+                    return ('', 400)
+
+                if key == 'train' and Data.query.filter_by(name=name).first() is not None:
                     flash("这个文件名已经存在！！")
                     print('aaaa???')
                     return ('', 400)
