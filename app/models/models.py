@@ -29,6 +29,7 @@ class User(UserMixin, db.Model):
     camp = db.relationship("TrainCamp", secondary=camp_user)
     role_id = db.Column(db.ForeignKey("role.id"), nullable=False)
     role = db.relationship(Role)
+    sub_id = db.Column(db.Integer, default=-1)
 
     def verify_password(self, password):
         return self.password == password

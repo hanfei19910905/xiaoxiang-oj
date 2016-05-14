@@ -4,7 +4,6 @@ $(function () {
     $('#fileupload').fileupload({
         autoUpload: false,
         replaceFileInput: false,
-        maxChunkSize: 1024 * 1024,
         add : function(e, data) {
             file = data
             name = e.delegatedEvent.target.name
@@ -20,9 +19,9 @@ $(function () {
                 progress + '%'
             );
         },
-        stop : function(e) {
-            window.location.href = '/admin/data'
-        },
+        //stop : function(e) {
+        //    window.location.href = '/admin/data'
+        //},
 //        chunkalways: function(e, opt) {
 //            console.log(opt.jqXHR)
 //            console.log(opt.result)
@@ -41,7 +40,7 @@ $(function () {
         for (var i = pars.length - 1; i >= 0; i--)
         {
             console.log(pars[i])
-            for(var j = 0; j< 3; j++){
+            for(var j = 0; j< 2; j++){
                 if (names[j] == pars[i] && !hash[j]){
                     hash[j] = true
                     r_f[j] = files[i]
