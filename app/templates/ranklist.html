@@ -1,5 +1,8 @@
+{% extends "bootstrap/base.html" %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='sort.css')}}">
 {% if prank %}
-    <table class="table table-striped">
+    <table class="table table-striped tablesorter" id="rank">
         <thead>
             <th>User</th>
             <th>Total</th>
@@ -24,3 +27,14 @@
 {% else %}
 <p>There are not submissions.</p>
 {% endif %}
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script type="text/javascript" src="{{url_for('static', filename='rank.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jquery.tablesorter.min.js')}}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#rank").tablesorter();   
+}); 
+</script>
+{% endblock %}
