@@ -1,12 +1,9 @@
 from flask import render_template, redirect, request, url_for, flash, send_from_directory
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_user, login_required, logout_user
 from . import main
-from .. import app
-from .. import Session
-from .. import db
+from .. import db, login_manager
 from .forms import LoginForm
 from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 
 
@@ -27,6 +24,7 @@ def login():
 def index():
     return render_template('index.html', active='index')
 
+
 @main.route('/')
 def index1():
     return redirect(url_for('main.index'))
@@ -38,6 +36,7 @@ def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('main.index'))
+
 
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
@@ -97,8 +96,6 @@ def get_rank(rname=None):
         res = crlist
         rlist = clist
     return render_template('ranklist.html', prank=res, plist=rlist)
-
-from .. import login_manager
 
 
 @login_manager.user_loader
