@@ -9,7 +9,11 @@ result_fd = open("result.csv", 'r')
 data_id = 0
 def gen_data(data_fd):
     data, ids = [], []
+    first = True
     for f in data_fd:
+        if first :
+            first = False
+            continue
         li = f.split(',', 1)
         if len(li) != 2:
             print('at least two columns in csv file.')
