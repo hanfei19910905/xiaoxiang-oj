@@ -5,6 +5,7 @@ from flask_login import current_user
 from sqlalchemy.event import listens_for
 from flask_admin import form, expose
 from wtforms import ValidationError
+from werkzeug.utils import secure_filename
 from jinja2 import Markup
 from ..models import *
 import functools, os
@@ -98,7 +99,7 @@ class JudgeView(AdminView):
         return AdminView.edit_view(self)
 
     def namegen(obj, filedata):
-        return obj.name + "_judge.py"
+        return secure_filename(obj.name + "_judge.py")
 
     form_overrides = {
         'code': form.FileUploadField,
@@ -109,7 +110,7 @@ class JudgeView(AdminView):
     }
 
     def _list_download_link(view, context, model, name):
-        return Markup('<a href=/download/judge/%s> download </a>' % (model.code))
+        return Markup('<a href=/download/%s> download </a>' % (model.code))
 
     column_formatters = {
         'code': _list_download_link
@@ -187,7 +188,7 @@ class DataView(AdminView):
     create_template = 'admin/data_create.html'
 
     def namegen(filename, obj, filedata):
-        return obj.name + "_" + filename
+        return  obj.name + "_" + filename
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):

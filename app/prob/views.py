@@ -45,6 +45,8 @@ def clear_env():
 @prob.route('/problem_set/<hid>/<pid>', methods=['GET', 'POST'])
 @login_required
 def prob_view(hid, pid):
+    hid = int(hid)
+    pid = int(pid)
     if request.method  == 'GET':
         return prob_view_get(hid, pid)
     else:
@@ -56,7 +58,7 @@ def prob_view(hid, pid):
             key = _
         value = files[key] # this is a Werkzeug FileStorage object
         if 'Content-Range' in request.headers:
-            if key == 'Result':
+            if key == 'result':
                 id = current_user.sub_id
                 if id != -1:
                     range_str = request.headers['Content-Range'].split(" ")[1]
@@ -94,7 +96,7 @@ def prob_view(hid, pid):
             flash(err)
             clear_env()
             return redirect(url_for('prob.prob_view', hid = hid, pid = pid))
-        elif key == "Source":
+        elif key == "source":
             # first check
             result, ok, problem, homework = checkValid(hid, pid)
             if not ok :
@@ -135,6 +137,9 @@ def prob_view(hid, pid):
                 current_user.sub_id = sub.id
                 db.session.commit()
                 return ("", 200)
+            else:
+                flash('非法的提交！')
+                return redirect(request.args.get('next') or url_for("main.index"))
         else:
             id = current_user.sub_id
             if id != -1:
@@ -142,7 +147,7 @@ def prob_view(hid, pid):
                 if sub is None:
                     flash('unkown error!')
                     return redirect(request.args.get('next') or url_for("main.index"))
-                problem = sub.problem
+                problem = sub.prob
                 submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')
                 value.save(submission_path)
                 sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'), \
@@ -158,8 +163,6 @@ def prob_view(hid, pid):
 
 
 def prob_view_get(hid, pid):
-    hid = int(hid)
-    pid = int(pid)
     result, ok, problem, homework = checkValid(hid, pid)
     if not ok:
         return result

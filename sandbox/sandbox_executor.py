@@ -22,6 +22,7 @@ class SandBoxExecutor(object):
         box_path = '/tmp/box/' + str(box_id) + '/box/'
         os.system("\cp %s %s" % (result_path, os.path.join(box_path, 'result.csv')))
         os.system("\cp %s %s" % (data_path, os.path.join(box_path, 'data.csv')))
+        print("\cp %s %s" % (data_path, os.path.join(box_path, 'data.csv')))
         os.system("\cp %s %s" % (judge_path, os.path.join(box_path, 'judge.py')))
         print('PYPY', app.config['PY_PATH'])
         os.system("\cp %s %s" % (app.config['PY_PATH'], os.path.join(box_path, 'main.py')))

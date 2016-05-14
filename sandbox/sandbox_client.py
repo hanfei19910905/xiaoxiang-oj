@@ -13,7 +13,7 @@ class SandBoxRpcClient(object):
         self.channel.queue_declare(queue=self.ch, durable=True)
 
     def call(self, submit_id, result_path, data_path, judge_path):
-
+        print('data_path', data_path)
         rpc_body = encode(submit_id, result_path, data_path, judge_path)
         for i in range(2):
             try:

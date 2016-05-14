@@ -29,7 +29,7 @@ $(document).ready(function() {
                     },
                     file: {
                         extension: 'csv,zip',
-                        message: 'You can only upload py file or zip file.'
+                        message: 'You can only upload csv file.'
                     }
                 }
             }

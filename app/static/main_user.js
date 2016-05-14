@@ -5,6 +5,7 @@ $(function () {
         autoUpload: false,
         replaceFileInput: false,
         add : function(e, data) {
+            console.log(data)
             file = data
             name = e.delegatedEvent.target.name
             files.push(file)
@@ -19,14 +20,16 @@ $(function () {
                 progress + '%'
             );
         },
-        //stop : function(e) {
-        //    window.location.href = '/admin/data'
-        //},
+        stop : function(e) {
+            window.location.href = '/status'
+        },
 //        chunkalways: function(e, opt) {
+              //console.log('chunkalways')
 //            console.log(opt.jqXHR)
 //            console.log(opt.result)
 //        },
 //        always: function(e, opt) {
+              //console.log('always')
 //            console.log(opt.jqXHR)
 //            console.log(opt.result)
 //        },
@@ -34,8 +37,8 @@ $(function () {
     })
     $("#submit").on('click', function (e) {
         e.preventDefault();
-        var names = ['train', 'test1', 'test2']
-        var r_f = ['', '', '']
+        var names = ['source', 'result']
+        var r_f = ['', '']
         var hash = [false, false, false]
         for (var i = pars.length - 1; i >= 0; i--)
         {
@@ -48,13 +51,13 @@ $(function () {
                 }
             }
         }
-        for(var i = 0; i < 3; i++)
+        for(var i = 0; i < 2; i++)
             if (!hash[i])
             {
                 console.log("failed")
                 return false
             }
-        for (var i = 0; i < 3; i++)
+        for (var i = 0; i < 2; i++)
         {
             r_f[i].submit()
         }

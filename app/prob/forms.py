@@ -5,6 +5,6 @@ from wtforms.validators import DataRequired, Regexp
 
 
 class SubmitForm(Form):
-    source = FileField('Source', validators=[FileRequired(), FileAllowed(['zip', 'py'])])
-    result = FileField('Result', validators=[FileRequired(), FileAllowed(['csv', 'csv.zip'])])
+    source = FileField('Source', validators=[FileAllowed(['zip', 'py'])])
+    result = FileField('Result', validators=[FileAllowed(['csv', 'csv.zip'])])
     submit = SubmitField('Submit')
