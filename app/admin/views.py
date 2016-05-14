@@ -1,5 +1,5 @@
 from .. import _admin, db, app
-from flask import redirect, url_for, request, flash
+from flask import redirect, url_for, request, flash, g
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from sqlalchemy.event import listens_for
@@ -7,7 +7,7 @@ from flask_admin import form, expose
 from wtforms import ValidationError
 from jinja2 import Markup
 from ..models import *
-import functools, os, json
+import functools, os
 
 
 class AdminView(ModelView):
@@ -158,9 +158,9 @@ _admin.add_view(ProbView(Problem, db.session, name="题库"))
 def del_path(mapper, conn, target):
     if target.name:
         try:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train' % target.name))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1' % target.name))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2' % target.name))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train.csv' % target.name))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1.csv' % target.name))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2.csv' % target.name))
         except OSError:
             # Don't care if was not deleted because it does not exist
             pass
@@ -179,11 +179,15 @@ def del_path(mapper, conn, target):
 
 class DataField(form.FileUploadField):
     def populate_obj(self, obj, name):
-        setattr(obj, name, "lala.csv")
+        filename = self.generate_name(obj, self.data)
+        setattr(obj, name, filename)
 
 
 class DataView(AdminView):
-    create_template  = 'admin/data_create.html'
+    create_template = 'admin/data_create.html'
+
+    def namegen(filename, obj, filedata):
+        return obj.name + "_" + filename
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
@@ -218,12 +222,10 @@ class DataView(AdminView):
             if left == 0:
                 if name is None or name == "":
                     flash(" 文件名不可以为空！！")
-                    print('aaaa???')
                     return ('', 400)
 
                 if key == 'train' and Data.query.filter_by(name=name).first() is not None:
                     flash("这个文件名已经存在！！")
-                    print('aaaa???')
                     return ('', 400)
                 try:
                     if key == 'test2':
@@ -231,25 +233,39 @@ class DataView(AdminView):
                     else:
                         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.csv' % (name, key)))
                 except OSError:
-                    # Don't care if was not deleted because it does not exist
                     pass
-            if key == 'test2' :
+            if key == 'test2':
                 prefix = 'secret/'
             else:
                 prefix = 'data/'
             filename = prefix + name + "_" + key + ".csv"
-            print (filename)
-            with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'a') as f:
-                f.write(str(value.stream.read()))
+            print (filename, value)
+            with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'ab') as f:
+                f.seek(int(left))
+                f.write(value.stream.read())
             if right + 1 == all:
-                # request.files['train'] = request.files[key]
-                # request.files['test1'] = request.files[key]
-                # request.files['test2'] = request.files[key]
                 return AdminView.create_view(self)
             return ('', 200)
         else:
-            return AdminView.create_view(self)
+            # first time
+            if name is None or name == "":
+                flash(" 文件名不可以为空！！")
+                return ('', 400)
+            if key == 'train' and Data.query.filter_by(name=name).first() is not None:
+                flash(" 请重新命名！！")
+                return ('', 400)
+            if key == 'test2':
+                path = os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.csv' % (name, key))
+            else:
+                path = os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.csv' % (name, key))
+            try:
+                os.remove(path)
+            except OSError:
+                # Don't care if was not deleted because it does not exist
+                pass
 
+            value.save(path)
+            return AdminView.create_view(self)
 
     form_overrides = {
         'train' : DataField,
@@ -258,9 +274,9 @@ class DataView(AdminView):
     }
 
     form_args = {
-        'train' : {'label' : 'Train File'},
-        'test1' : {'label' : 'Test1 File'},
-        'test2' : {'label' : 'Test2 File'},
+        'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train.csv')},
+        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1.csv')},
+        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2.csv')},
     }
 
     def on_model_change(self, form, model, is_created):

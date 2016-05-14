@@ -9,15 +9,14 @@ import os
 @download.route('/data/<filename>')
 @login_required
 def download_data(filename):
-    print('aaa??')
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + '.csv')
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + '.csv', as_attachment=True)
 
 
 @download.route('/secret/<filename>')
 @login_required
 @admin_required
 def download_sec(filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secret.csv'), filename + '.csv')
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secret'), filename + '.csv', as_attachment=True)
 
 
 @download.route('/judge/<filename>')
