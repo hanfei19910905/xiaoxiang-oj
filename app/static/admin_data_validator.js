@@ -8,6 +8,18 @@ $(document).ready(function() {
         },
         submitButtons: 'button[id="submit"]',
         fields: {
+            name: {
+                message: 'The name is not valid',
+                validators: {
+                    notEmpty: {
+                        message: 'You should input data name.'
+                    },
+                    regexp: {
+                        regexp: /^[^\s]+$/i,
+                        message: 'You can not input a data name with invalid characters.'
+                    }
+                }
+            },
             train: {
                 message: 'The train file is not valid',
                 validators: {

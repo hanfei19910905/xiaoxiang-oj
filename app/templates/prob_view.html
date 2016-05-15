@@ -13,8 +13,42 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-8">
-                    <p class="lead">Description</p>
-                    <div class="well">{{problem.description | safe }}</div>
+                <div>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a id="ptab" href="#problem" aria-controls="problem" role="tab" data-toggle="tab">Description</a></li>
+                        <li role="presentation"><a id="htab" href="#rank" aria-controls="profile" role="tab" data-toggle="tab">Rank</a></li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="problem">
+                            <p class="lead">Description</p>
+                            <div class="well">{{problem.description | safe }}</div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="rank">
+                            {% if prank %}
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in prank %}
+                                    <tr>
+                                        <td>{{p[0]}}</td>
+                                        <td>{{p[1]}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p>还没有人提交哦~</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
             {% if not hid == -1 %}
             <div class="col-sm-4">

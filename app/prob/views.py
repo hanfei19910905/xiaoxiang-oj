@@ -5,7 +5,7 @@ from flask import render_template, redirect, url_for, flash, request
 from . import prob, sandbox_client
 from .. import app, db
 from .forms import SubmitForm
-from ..models import Problem, Submission, User
+from ..models import Problem, Submission, User, ProbUserStatic
 from flask_login import login_required, current_user
 import datetime, os
 
@@ -216,9 +216,17 @@ def prob_view_get(hid, pid):
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
+    prank = ProbUserStatic.query.filter_by(id=pid).order_by(ProbUserStatic.score).all()
+    if len(prank) <= 0:
+        prlist = None
+    else:
+        prlist = list()
+    for p in prank:
+        user = User.query.filter_by(p.user_id).one()
+        prlist.append((user, p.score))
     if hid == -1:
-        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem')
-    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework')
+        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist)
+    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', prank=prlist)
 
 
 @prob.route('/status')
