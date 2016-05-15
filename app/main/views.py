@@ -84,7 +84,6 @@ def get_rank(rname=None):
         crank[uname]['total'] += float(sub[0])
         home = HomeWork.query.filter_by(id = sub.h_id).one()
         crank[uname][home.camp_id] += float(sub[0])
-    res = None
     hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
     crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
     if rname == 'prob':
