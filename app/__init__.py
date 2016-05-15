@@ -55,5 +55,5 @@ app.register_blueprint(homework_blueprint, url_prefix='/homework')
 from .download import download as download_blueprint
 app.register_blueprint(download_blueprint, url_prefix='/download')
 
-_admin = Admin(app, template_mode='bootstrap3')
+_admin = Admin(app, template_mode='bootstrap3', name='教师管理页')
 from . import admin
