@@ -2,7 +2,7 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='sort.css')}}">
 {% if prank %}
-    <table class="table table-striped tablesorter" id="rank">
+    <table class="table table-striped tablesorter" id="{{type}}">
         <thead>
             <th>User</th>
             {% for prob in plist %}
@@ -38,7 +38,7 @@
 <script type="text/javascript" src="{{url_for('static', filename='jquery.tablesorter.min.js')}}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#rank").tablesorter();   
+    $("#{{type}}").tablesorter();   
 }); 
 </script>
 {% endblock %}
