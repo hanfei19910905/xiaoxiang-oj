@@ -3,12 +3,12 @@
 <div id="progress">
         <div class="bar" style="width: 0%;"> </div>
     </div>
-<form id="fileupload" action method="POST" enctype="multipart/form-data" role="form">
+<form id="fileupload" class="form-horizontal" action method="POST" enctype="multipart/form-data" role="form">
     {{ lib.render_form_fields(form, form_opts=form_opts) }}
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10 sumbit-row">
-    <input id = "submit" class="btn btn-primary start" value="Submit">
-            </div>
+            <input id = "submit" class="btn btn-primary start" value="Submit">
+        </div>
     </div>
 </form>
 {% endblock %}
@@ -17,6 +17,6 @@
 <script src="{{url_for('static', filename='jquery.ui.widget.js')}}" type="text/javascript"></script>
 <script src="{{url_for('static', filename='jquery.fileupload.js')}}" type="text/javascript"></script>
 <script src="{{url_for('static', filename='main.js')}}" type="text/javascript"></script>
-<script src="{{url_for('static', filename='admin_data_validator.js')}}" type="text/javascript"></script>
 <script src="//cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.min.js"></script>
+<script src="{{url_for('static', filename='admin_data_validator.js')}}" type="text/javascript"></script>
 {% endblock %}

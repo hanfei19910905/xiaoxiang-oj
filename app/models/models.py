@@ -63,9 +63,9 @@ class Data(db.Model):
     __tablename__ = 'data'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), unique=True, index=True, nullable=False)
-    train = db.Column(db.String(200), default = 'train.csv')
-    test1= db.Column(db.String(200), default= 'test1.csv')
-    test2 = db.Column(db.String(200),default= 'test2.csv')
+    train = db.Column(db.String(200))
+    test1= db.Column(db.String(200))
+    test2 = db.Column(db.String(200))
     owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
     owner = db.relationship(User)
 
