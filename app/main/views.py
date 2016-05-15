@@ -1,9 +1,9 @@
-from flask import render_template, redirect, request, url_for, flash, send_from_directory
+from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, login_required, logout_user
 from . import main
 from .. import db, login_manager
 from .forms import LoginForm
-from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic
+from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, homework_prob
 from sqlalchemy import func
 
 
@@ -40,22 +40,23 @@ def logout():
 
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
-    sub_list = ProbUserStatic.query.all()
+    #pid = homework_prob.query.sort_by(homework_prob.id.desc()).first()
+    pid = db.session.query(homework_prob).order_by(homework_prob.c.id.desc()).first().problem_id
+    if pid is None:
+        return render_template('ranklist.html')
+    sub_list = ProbUserStatic.query.filter_by(prob_id = pid).all()
     if len(sub_list) <= 0:
         return render_template('ranklist.html')
-    plist = db.session.query(Problem).all()
+    plist = [Problem.query.filter_by(id = pid).first()]
     prank = dict()
     for sub in sub_list:
         uname = User.query.filter_by(id = sub.user_id).one().name
         if uname not in prank:
             prank[uname] = dict()
-            for prob in plist:
-                prank[uname][prob.id] = '没有得分'
-            prank[uname]['total'] = 0
+            prank[uname][pid] = '没有得分'
         prank[uname][sub.prob_id] = sub.score
-        prank[uname]['total'] += sub.score
-    prlist = sorted(prank.items(), key=lambda d:d[1]['total'], reverse=True)
-    sub_list2 = db.session.query(func.max(Submission.score), \
+    prlist = sorted(prank.items(), key=lambda d:d[1][pid], reverse=True)
+    sub_list2 = db.session.query(func.max(Submission.score),
         Submission.prob_id, Submission.h_id, Submission.user_id)\
         .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()
     clist = db.session.query(TrainCamp).all()

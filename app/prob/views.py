@@ -81,8 +81,8 @@ def prob_view(hid, pid):
                             return redirect(request.args.get('next') or url_for("main.index"))
                         problem = sub.problem
                         #todo: check if it is a zip file.
-                        sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'), \
-                                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
+                        sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
+                                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
 
                         flash("提交成功")
@@ -150,8 +150,8 @@ def prob_view(hid, pid):
                 problem = sub.prob
                 submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')
                 value.save(submission_path)
-                sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'), \
-                                    os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
+                sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
+                                    os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                     os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
 
                 flash("提交成功")
@@ -212,8 +212,8 @@ def prob_view_get(hid, pid):
             db.session.delete(sub)
             db.session.commit()
             return redirect(request.args.get('next') or url_for("main.index"))
-        sandbox_client.call(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'), \
-                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2), \
+        sandbox_client.call(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'),
+                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
     prank = ProbUserStatic.query.filter_by(id=pid).order_by(ProbUserStatic.score).all()
@@ -222,7 +222,7 @@ def prob_view_get(hid, pid):
     else:
         prlist = list()
     for p in prank:
-        user = User.query.filter_by(p.user_id).one()
+        user = User.query.filter_by(id=p.user_id).one()
         prlist.append((user, p.score))
     if hid == -1:
         return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist)
