@@ -42,8 +42,8 @@ $(document).ready(function() {
                 alert(errorThrown);
             },
             success: function(data, status) {
-                if ($("#camp").is(":empty")) {
-                    $("#camp").append(data);
+                if ($("#traincamp").is(":empty")) {
+                    $("#traincamp").append(data);
                 }
             }
         });

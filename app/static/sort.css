@@ -2,5 +2,6 @@ table.table thead .tablesorter-headerUnSorted,
 table.table thead .tablesorter-headerAsc,
 table.table thead .tablesorter-headerDesc,
 
+table.table thead .tablesorter-headerUnSorted { background: url('image/sort_both.png') no-repeat center right;  }
 table.table thead .tablesorter-headerAsc { background: url('image/sort_asc.png') no-repeat center right;  }
 table.table thead .tablesorter-headerDesc { background: url('image/sort_desc.png') no-repeat center right;  }
