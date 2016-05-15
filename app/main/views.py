@@ -40,10 +40,10 @@ def logout():
 
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
-    #pid = homework_prob.query.sort_by(homework_prob.id.desc()).first()
-    pid = db.session.query(homework_prob).order_by(homework_prob.c.id.desc()).first().problem_id
-    if pid is None:
+    ppp = db.session.query(homework_prob).order_by(homework_prob.c.id.desc()).first()
+    if ppp is None:
         return render_template('ranklist.html')
+    pid = ppp.problem_id
     sub_list = ProbUserStatic.query.filter_by(prob_id = pid).all()
     if len(sub_list) <= 0:
         return render_template('ranklist.html')
