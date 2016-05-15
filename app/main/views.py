@@ -96,7 +96,7 @@ def get_rank(rname=None):
     else:
         res = crlist
         rlist = clist
-    return render_template('ranklist.html', prank=res, plist=rlist)
+    return render_template('ranklist.html', prank=res, plist=rlist, type=rname)
 
 
 @login_manager.user_loader

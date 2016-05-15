@@ -5,21 +5,25 @@
     <table class="table table-striped tablesorter" id="rank">
         <thead>
             <th>User</th>
-            <th>Total</th>
             {% for prob in plist %}
             <th>{{ prob.name }}</th>
             {% endfor %}
+            {% if not type is equalto 'prob' %}
+            <th>Total</th>
+            {% endif %}
         </thead>
         <tbody>
             {% for prk in prank %}
             <tr>
                 <td>{{ prk[0] }}</td>
-                <td>{{ prk[1]['total'] }}</td>
                 {% for pid in prank[0][1]%}
                 {% if pid != 'total' %}
                 <td>{{ prk[1][pid] }}</td>
                 {% endif %}
                 {% endfor %}
+                {% if not type is equalto 'prob' %}
+                <td>{{ prk[1]['total'] }}</td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
