@@ -75,6 +75,8 @@ def prob_view(hid, pid):
                     with open(submission_path, 'ab') as f:
                         f.write(value.stream.read())
                     if left + 1 == all:
+                        flash("提交成功")
+                        clear_env()
                         sub = Submission.query.filter_by(id = id).first()
                         if sub is None:
                             flash('unkown error!')
@@ -84,9 +86,6 @@ def prob_view(hid, pid):
                         sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
-
-                        flash("提交成功")
-                        clear_env()
                         return redirect(url_for('prob.status'))
                     else:
                         return ("", 200)
@@ -105,6 +104,7 @@ def prob_view(hid, pid):
             if form.validate_on_submit() and problem is not None and homework is not None:
                 if current_user.sub_id != -1:
                     flash("请等一会再提交！")
+                    clear_env()
                     return redirect(request.args.get('next') or url_for("main.index"))
                 src_ext = value.filename.rsplit('.', 1)[-1]
                 if homework.begin_time < datetime.datetime.now() < homework.end_time:
@@ -163,6 +163,7 @@ def prob_view(hid, pid):
 
 
 def prob_view_get(hid, pid):
+    clear_env()
     result, ok, problem, homework = checkValid(hid, pid)
     if not ok:
         return result
