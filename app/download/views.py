@@ -43,7 +43,7 @@ def code_show(sid):
     print('come!')
     sub = Submission.query.filter_by(id = sid).first()
     if sub is not None:
-        if not current_user.is_admin or current_user.id != sub.user.id:
+        if (not current_user.is_admin) and current_user.id != sub.user.id:
             flash('你没有权限查看这个提交！')
             return redirect('/status')
         p_list = []
