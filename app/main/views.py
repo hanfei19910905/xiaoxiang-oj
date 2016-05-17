@@ -47,7 +47,8 @@ def get_rank(rname=None):
     sub_list = ProbUserStatic.query.filter_by(prob_id = pid).all()
     if len(sub_list) <= 0:
         return render_template('ranklist.html')
-    plist = [Problem.query.filter_by(id = pid).first()]
+    prob = Problem.query.filter_by(id = pid).first()
+    plist = [prob]
     prank = dict()
     for sub in sub_list:
         uname = User.query.filter_by(id = sub.user_id).one().name
@@ -55,7 +56,7 @@ def get_rank(rname=None):
             prank[uname] = dict()
             prank[uname][pid] = '没有得分'
         prank[uname][sub.prob_id] = sub.score
-    prlist = sorted(prank.items(), key=lambda d:d[1][pid], reverse=True)
+    prlist = sorted(prank.items(), key=lambda d:d[1][pid], reverse= not prob.judge.desc)
     sub_list2 = db.session.query(func.max(Submission.score),
         Submission.prob_id, Submission.h_id, Submission.user_id)\
         .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()

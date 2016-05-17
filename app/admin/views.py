@@ -186,6 +186,7 @@ class DataField(form.FileUploadField):
 
 class DataView(AdminView):
     create_template = 'admin/data_create.html'
+    can_edit = False
 
     def namegen(filename, obj, filedata):
         return  obj.name + "_" + filename
@@ -317,6 +318,7 @@ class SubView(AdminView):
     can_create = False
     page_size = 50
     can_edit = False
+    column_default_sort = ('id', True)
     column_filters = ['user.name', 'homework.name', 'prob.name', 'status']
     list_template = 'admin/myList.html'
 

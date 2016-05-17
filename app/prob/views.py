@@ -225,6 +225,7 @@ def prob_view_get(hid, pid):
     for p in prank:
         user = User.query.filter_by(id=p.user_id).one()
         prlist.append((user, p.score))
+        prlist.sort(key=lambda item: item[1], reverse=not problem.judge.desc)
     if hid == -1:
         return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist)
     return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', prank=prlist)
