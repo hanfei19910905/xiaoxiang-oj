@@ -6,11 +6,16 @@ from flask_admin import Admin
 from sqlalchemy.orm import sessionmaker
 from config import config
 from functools import wraps
+import logging
+from logging.handlers import RotatingFileHandler
 
 bootstrap = Bootstrap()
 
 app = Flask(__name__)
 app.config.from_object(config['default'])
+handler= RotatingFileHandler('/var/log/xiaoxiang/foo.log', backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
 db = SQLAlchemy(app)
 engine = db.get_engine(app)
 Session = sessionmaker(bind=engine)

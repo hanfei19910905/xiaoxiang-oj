@@ -1,5 +1,6 @@
 import pika
 from .utils import encode
+from app import  app
 
 
 class SandBoxRpcClient(object):
@@ -13,7 +14,7 @@ class SandBoxRpcClient(object):
         self.channel.queue_declare(queue=self.ch, durable=True)
 
     def call(self, submit_id, result_path, data_path, judge_path):
-        print('data_path', data_path)
+        app.logger.info("call!! %s %s %s %s" % (submit_id, result_path, data_path, judge_path))
         rpc_body = encode(submit_id, result_path, data_path, judge_path)
         for i in range(2):
             try:

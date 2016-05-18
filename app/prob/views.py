@@ -21,7 +21,6 @@ def checkValid(hid, pid):
     homework = None
     home_list = problem.homework
     for home in home_list:
-        print (home.id, hid)
         if int(home.id) == hid:
             homework = home
             if not homework.camp.public and not current_user.is_admin :
@@ -50,13 +49,12 @@ def prob_view(hid, pid):
     if request.method  == 'GET':
         return prob_view_get(hid, pid)
     else:
-        print('fuck!!')
         files = request.files
-        print(request.files)
         key = ""
         for _ in files.keys():
             key = _
         value = files[key] # this is a Werkzeug FileStorage object
+        app.logger.info("get!! filename: " + key + " current_user %d" % current_user.id)
         if 'Content-Range' in request.headers:
             if key == 'result':
                 id = current_user.sub_id
@@ -65,7 +63,7 @@ def prob_view(hid, pid):
                     left, right_str = range_str.split('-')
                     right, all = right_str.split('/')
                     left, right, all = int(left), int(right), int(all)
-                    print(left, right, all)
+                    app.logger.info("range! %d %d %d subId: %d" % (left, right, all, id))
                     submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')
                     if left == 0: # clear path
                         try :
@@ -80,12 +78,15 @@ def prob_view(hid, pid):
                         sub = Submission.query.filter_by(id = id).first()
                         if sub is None:
                             flash('unkown error!')
+                            app.logger.error("so sad!!! unknown id!! %d", sub)
                             return redirect(request.args.get('next') or url_for("main.index"))
                         problem = sub.problem
                         #todo: check if it is a zip file.
                         sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
+                        sub.status = 'queueing...'
+                        db.session.commit()
                         return redirect(url_for('prob.status'))
                     else:
                         return ("", 200)
@@ -99,25 +100,24 @@ def prob_view(hid, pid):
             # first check
             result, ok, problem, homework = checkValid(hid, pid)
             if not ok :
+                app.logger.error("source is not valid!")
                 return result
             form = SubmitForm()
             if form.validate_on_submit() and problem is not None and homework is not None:
-                if current_user.sub_id != -1:
-                    flash("请等一会再提交！")
-                    clear_env()
-                    return redirect(request.args.get('next') or url_for("main.index"))
                 src_ext = value.filename.rsplit('.', 1)[-1]
                 if homework.begin_time < datetime.datetime.now() < homework.end_time:
                     sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = src_ext, result = "", time = datetime.datetime.now(), status = 'pending')
                 else:
+                    app.logger.error("out of date!")
                     flash('the homework is out of date!')
                     return redirect(request.args.get('next') or url_for("main.index"))
                 db.session.add(sub)
                 db.session.commit()
+                app.logger.info("create sub %d!" % sub.id)
                 try:
                     submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id))
                     os.makedirs(submission_path)
-                    print (submission_path)
+                    app.logger.info("path: %s" % submission_path)
                     if src_ext =='py':
                         value.save(os.path.join(submission_path, 'source.py'))
                     else:
@@ -131,6 +131,7 @@ def prob_view(hid, pid):
                             return redirect(request.args.get('next') or url_for("main.index"))
                 except os.error:
                     flash('save source file failed! err is ', os.error.strerror)
+                    app.logger.error('save source file failed! err is ', os.error.strerror)
                     db.session.delete(sub)
                     db.session.commit()
                     return redirect(request.args.get('next') or url_for("main.index"))
@@ -145,6 +146,7 @@ def prob_view(hid, pid):
             if id != -1:
                 sub = Submission.query.filter_by(id = id).first()
                 if sub is None:
+                    app.logger.error("can't find sid")
                     flash('unkown error!')
                     return redirect(request.args.get('next') or url_for("main.index"))
                 problem = sub.prob
@@ -153,7 +155,6 @@ def prob_view(hid, pid):
                 sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
                                     os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                     os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
-
                 flash("提交成功")
                 clear_env()
                 return redirect(url_for('prob.status'))
@@ -163,7 +164,6 @@ def prob_view(hid, pid):
 
 
 def prob_view_get(hid, pid):
-    clear_env()
     result, ok, problem, homework = checkValid(hid, pid)
     if not ok:
         return result
