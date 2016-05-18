@@ -42,4 +42,7 @@ def check(ids1, ids2):
 
 check(_ids1,_ids2)
 
-print judge.evaluate(_ids1, _result, _data)
+try:
+    print judge.evaluate(_ids1, _result, _data)
+except Exception as e:
+    print e
