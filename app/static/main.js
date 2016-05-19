@@ -59,5 +59,6 @@ $(function () {
         {
             r_f[i].submit()
         }
+        $("#submit").unbind('click')
     });
 });
