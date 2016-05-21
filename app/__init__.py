@@ -8,7 +8,7 @@ from config import config
 from functools import wraps
 import logging
 from logging.handlers import RotatingFileHandler
-from celery import Celery
+from celery import Celery, platforms
 
 bootstrap = Bootstrap()
 
@@ -27,6 +27,8 @@ login_manager.login_view = 'main.login'
 
 celery = Celery(app.name, broker="amqp://guest@localhost//")
 celery.conf.update(app.config)
+
+platforms.C_FORCE_ROOT=True
 
 def admin_required(view_func):
     @wraps(view_func)
