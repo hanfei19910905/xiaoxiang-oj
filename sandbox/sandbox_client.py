@@ -15,8 +15,9 @@ class SandBoxRpcClient(object):
 
     def call(self, submit_id, result_path, data_path, judge_path):
         rpc_body = encode(submit_id, result_path, data_path, judge_path)
-        for i in range(2):
+        for i in range(5):
             try:
+                app.logger.info("try!! %s %s %s %s" % (submit_id, result_path, data_path, judge_path))
                 self.channel.basic_publish(exchange='',
                                            routing_key=self.ch,
                                            properties=pika.BasicProperties(
@@ -32,6 +33,7 @@ class SandBoxRpcClient(object):
 
                 self.channel.queue_declare(queue=self.ch, durable=True)
 
+        app.logger.info("local!! %s %s %s %s" % (submit_id, result_path, data_path, judge_path))
         #convert to local judge. that's a sync way!
         from .sandbox_server import SandBoxService
         SandBoxService.local_exec(submit_id, result_path, data_path, judge_path)
