@@ -2,13 +2,13 @@
 # coding=utf-8
 
 from flask import render_template, redirect, url_for, flash, request
-from . import prob, sandbox_client
+from . import prob
 from .. import app, db
 from .forms import SubmitForm
 from ..models import Problem, Submission, User, ProbUserStatic
 from flask_login import login_required, current_user
 import datetime, os
-
+from  sandbox import async_call
 
 @prob.route('/problem_set') 
 def prob_set():
@@ -82,7 +82,8 @@ def prob_view(hid, pid):
                             return redirect(request.args.get('next') or url_for("main.index"))
                         problem = sub.problem
                         #todo: check if it is a zip file.
-                        sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
+                        app.logger.info("call!! %s" % str(id))
+                        async_call.delay(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
                         sub.status = 'queueing...'
@@ -152,7 +153,8 @@ def prob_view(hid, pid):
                 problem = sub.prob
                 submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')
                 value.save(submission_path)
-                sandbox_client.call(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
+                app.logger.info("call!! %s" % str(id))
+                async_call.delay(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
                                     os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                                     os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
                 flash("提交成功")
@@ -213,7 +215,7 @@ def prob_view_get(hid, pid):
             db.session.delete(sub)
             db.session.commit()
             return redirect(request.args.get('next') or url_for("main.index"))
-        sandbox_client.call(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'),
+        async_call.delay(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'),
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))

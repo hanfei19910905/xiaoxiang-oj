@@ -1,6 +1,6 @@
 import pika
 from .utils import encode
-from app import  app
+from app import app, celery
 
 
 class SandBoxRpcClient(object):
@@ -14,7 +14,6 @@ class SandBoxRpcClient(object):
         self.channel.queue_declare(queue=self.ch, durable=True)
 
     def call(self, submit_id, result_path, data_path, judge_path):
-        app.logger.info("call!! %s %s %s %s" % (submit_id, result_path, data_path, judge_path))
         rpc_body = encode(submit_id, result_path, data_path, judge_path)
         for i in range(2):
             try:
@@ -37,4 +36,8 @@ class SandBoxRpcClient(object):
         from .sandbox_server import SandBoxService
         SandBoxService.local_exec(submit_id, result_path, data_path, judge_path)
 
+from .sandbox_server import SandBoxService
 
+@celery.task
+def async_call(submit_id, result_path, data_path, judge_path):
+    SandBoxService.local_exec(submit_id, result_path, data_path, judge_path)
