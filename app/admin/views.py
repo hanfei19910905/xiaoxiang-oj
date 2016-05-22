@@ -322,6 +322,14 @@ class SubView(AdminView):
     column_filters = ['user.name', 'homework.name', 'prob.name', 'status']
     list_template = 'admin/myList.html'
 
+    def get_query(self):
+        if current_user.is_admin:
+            return Submission.query
+        elif current_user.is_teacher:
+            return Submission.query.join(HomeWork).join(TrainCamp).filter(or_(HomeWork.owner_id == current_user.id, TrainCamp.public == True))
+        else:
+            return None
+
     def _show_result(view, context, model, name):
         return Markup('<a data-toggle="modal" href="/download/show/%s" data-target="#%s">显示代码</a>' % ( str(model.id),  str(model.id)))
 
