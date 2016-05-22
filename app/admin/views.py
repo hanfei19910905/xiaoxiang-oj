@@ -52,6 +52,9 @@ class TrainCampView(AdminView):
             return True
         return False
 
+def _query_factory_owner():
+    return User.query.filter_by(id = current_user.id).all()
+
 
 class HomeWorkView(AdminView):
     @expose('/edit/', methods=('GET', 'POST'))
@@ -65,7 +68,7 @@ class HomeWorkView(AdminView):
             return redirect('/admin')
         return AdminView.edit_view(self)
 
-    def _query_factory():
+    def _query_factory_camp():
         if current_user.is_admin:
             return TrainCamp.query.all()
         else:
@@ -74,7 +77,8 @@ class HomeWorkView(AdminView):
     form_args = {
         'begin_time': {'validators': [_validate]},
         'end_time': {'validators': [_validate]},
-        'camp': {'query_factory': _query_factory},
+        'camp': {'query_factory': _query_factory_camp},
+        'owner': {'query_factory': _query_factory_owner},
     }
 
     def on_model_delete(self, model):
@@ -107,6 +111,7 @@ class JudgeView(AdminView):
 
     form_args = {
         'code' : {'label' : 'Judge Code', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'judge/', 'namegen' : namegen, "allowed_extensions" : ['py']},
+        'owner': {'query_factory': _query_factory_owner},
     }
 
     def _list_download_link(view, context, model, name):
@@ -135,6 +140,10 @@ class ProbView(AdminView):
             flash('你没有权限编辑！')
             return redirect('/admin')
         return AdminView.edit_view(self)
+
+    form_args = {
+        'author': {'query_factory': _query_factory_owner},
+    }
 
     column_exclude_list = form_excluded_columns = ['homework', 'ac_count', 'submit_count']
     page_size = 50
@@ -279,6 +288,7 @@ class DataView(AdminView):
         'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train.csv')},
         'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1.csv')},
         'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2.csv')},
+        'owner': {'query_factory': _query_factory_owner},
     }
 
     def on_model_change(self, form, model, is_created):
