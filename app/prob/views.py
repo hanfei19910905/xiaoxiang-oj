@@ -219,14 +219,15 @@ def prob_view_get(hid, pid):
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
                             os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
         return redirect(url_for("prob.status"))
-    prank = ProbUserStatic.query.filter_by(id=pid).order_by(ProbUserStatic.score).all()
+    prank = ProbUserStatic.query.filter_by(prob_id=pid).order_by(ProbUserStatic.score).all()
     if len(prank) <= 0:
         prlist = None
     else:
         prlist = list()
-    for p in prank:
-        user = User.query.filter_by(id=p.user_id).one()
-        prlist.append((user, p.score))
+        for p in prank:
+            user = User.query.filter_by(id=p.user_id).one()
+            prlist.append((user, p.score))
+        app.logger.info(len(prlist))
         prlist.sort(key=lambda item: item[1], reverse=not problem.judge.desc)
     if hid == -1:
         return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist)
