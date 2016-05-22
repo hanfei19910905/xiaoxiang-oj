@@ -3,6 +3,11 @@
 {% import "bootstrap/wtf.html" as wtf %}
 <link href="{{ url_for('static', filename='oj.css')}}" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrapValidator.css')}}">
+<style type="text/css">
+    div{
+        word-break:break-all;
+    }
+</style>
 <div class="page-header">
     <div class="container">
         <h2>{{ problem.name }}</h2>
@@ -12,12 +17,12 @@
 <div class="page-content">
     <div class="container">
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-md-9" role="main">
                 <div>
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a id="ptab" href="#problem" aria-controls="problem" role="tab" data-toggle="tab">Description</a></li>
-                        <li role="presentation"><a id="htab" href="#rank" aria-controls="profile" role="tab" data-toggle="tab">Rank</a></li>
+                        <li role="presentation"><a id="htab" href="#rank" aria-controls="rank" role="tab" data-toggle="tab">Rank</a></li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
@@ -50,7 +55,7 @@
                 </div>
             </div>
             {% if not hid == -1 %}
-            <div class="col-sm-4">
+            <div class="col-md-3" role="complementary">
                 <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
                 <a class="btn btn-warning" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
                 <div id="progress">
