@@ -1,5 +1,4 @@
 from .. import _admin, db, app
-from .form import IndexSetForm
 from flask import redirect, url_for, request, flash, render_template
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
@@ -362,6 +361,7 @@ class IndexSetView(AdminView):
 
     @expose('/', methods=('GET', 'POST'))
     def index_view(self):
+        from .form import IndexSetForm
         form = IndexSetForm()
         if form.validate_on_submit() :
             problem = form.problem

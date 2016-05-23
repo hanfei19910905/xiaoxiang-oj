@@ -1,7 +1,5 @@
 import os
-from app import app
-from app import models
-from app import db
+from app import app, models, db
 from flask_script import Manager
 from sandbox import SandBoxService
 import config
@@ -11,7 +9,7 @@ manager = Manager(app)
 @manager.command
 def init_db():
     "Initial Database"
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
     student = models.Role(name='student')
     db.session.add(student)
