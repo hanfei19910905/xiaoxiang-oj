@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user
 from . import main
 from .. import db, login_manager
 from .forms import LoginForm
-from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, homework_prob
+from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, homework_prob, IndexSet
 from sqlalchemy import func
 
 
@@ -40,7 +40,8 @@ def logout():
 
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
-    ppp = db.session.query(homework_prob).order_by(homework_prob.c.id.desc()).first()
+    id_li = IndexSet.query.all()
+    ppp = db.session.query(homework_prob).filter(homework_prob.c.problem_id==id_li[0].set_id).first()
     if ppp is None:
         return render_template('ranklist.html')
     pid = ppp.problem_id
@@ -60,8 +61,8 @@ def get_rank(rname=None):
     sub_list2 = db.session.query(func.max(Submission.score),
         Submission.prob_id, Submission.h_id, Submission.user_id)\
         .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()
-    clist = db.session.query(TrainCamp).all()
-    hlist = db.session.query(HomeWork).all()
+    clist = TrainCamp.query.filter_by(id = id_li[2].set_id).all()
+    hlist = HomeWork.query.filter_by(id = id_li[1].set_id).all()
     if len(sub_list2) <= 0:
         return render_template('ranklist.html')
     crank = dict()
@@ -74,15 +75,11 @@ def get_rank(rname=None):
             hrank[uname] = dict()
             for h in hlist:
                 hrank[uname][h.id] = 0.0
-            hrank[uname]['total'] = 0.0
         if uname not in crank:
             crank[uname] = dict()
             for c in clist:
                 crank[uname][c.id] = 0.0
-            crank[uname]['total'] = 0.0
         hrank[uname][sub[2]] += float(sub[0])
-        hrank[uname]['total'] += float(sub[0])
-        crank[uname]['total'] += float(sub[0])
         home = HomeWork.query.filter_by(id = sub.h_id).one()
         crank[uname][home.camp_id] += float(sub[0])
     hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
@@ -102,4 +99,3 @@ def get_rank(rname=None):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-

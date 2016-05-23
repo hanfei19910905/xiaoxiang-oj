@@ -1,5 +1,6 @@
 from .. import _admin, db, app
-from flask import redirect, url_for, request, flash, g
+from .form import IndexSetForm
+from flask import redirect, url_for, request, flash, render_template
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from sqlalchemy.event import listens_for
@@ -348,3 +349,33 @@ class SubView(AdminView):
     }
 
 _admin.add_view(SubView(Submission, db.session, name="提交记录查看"))
+
+class IndexSetView(AdminView):
+    can_create = False
+    can_delete = False
+    can_edit = False
+
+    def is_accessible(self):
+        if AdminView.is_accessible(self) and current_user.is_admin:
+            return True
+        return False
+
+    @expose('/', methods=('GET', 'POST'))
+    def index_view(self):
+        form = IndexSetForm()
+        if form.validate_on_submit() :
+            problem = form.problem
+            homework = form.homework
+            traincamp = form.traincamp
+
+            li = IndexSet.query.all()
+            li[0].set_id  = problem.id
+            li[1].set_id  = homework.id
+            li[2].set_id  = traincamp.id
+            db.session.commit()
+            flash('更新成功！')
+            return redirect('/admin')
+
+        return self.render('admin/index_set.html', form=form)
+
+_admin.add_view(IndexSetView(IndexSet, db.session, name="首页配置"))

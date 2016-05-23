@@ -31,6 +31,14 @@ def init_db():
     db.session.add(rmse)
     db.session.commit()
 
+    pid = models.IndexSet(id = 1, set_id = -1)
+    hid = models.IndexSet(id = 2, set_id = -1)
+    cid = models.IndexSet(id = 3, set_id = -1)
+    db.session.add(pid)
+    db.session.add(hid)
+    db.session.add(cid)
+    db.session.commit()
+
 @manager.command
 def sandbox_service(ch):
     print("Arg ch",ch)

@@ -157,3 +157,7 @@ class ProbUserStatic(db.Model):
     user_id = db.Column(db.ForeignKey('user.id'))
     prob_id = db.Column(db.ForeignKey('problem.id'))
     score = db.Column(db.Float, default = 0)
+
+class IndexSet(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    set_id = db.Column(db.Integer, default=-1)

@@ -8,9 +8,7 @@
             {% for prob in plist %}
             <th>{{ prob.name }}</th>
             {% endfor %}
-            {% if not type is equalto 'prob' %}
-            <th>Total</th>
-            {% endif %}
+
         </thead>
         <tbody>
             {% for prk in prank %}
@@ -21,9 +19,7 @@
                 <td>{{ prk[1][pid] }}</td>
                 {% endif %}
                 {% endfor %}
-                {% if not type is equalto 'prob' %}
-                <td>{{ prk[1]['total'] }}</td>
-                {% endif %}
+
             </tr>
             {% endfor %}
         </tbody>
@@ -34,11 +30,4 @@
 {% endblock %}
 {% block scripts %}
 {{super()}}
-<script type="text/javascript" src="{{url_for('static', filename='rank.js')}}"></script>
-<script type="text/javascript" src="{{url_for('static', filename='jquery.tablesorter.min.js')}}"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    $("#{{type}}").tablesorter();   
-}); 
-</script>
 {% endblock %}
