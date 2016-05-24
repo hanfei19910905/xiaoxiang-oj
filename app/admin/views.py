@@ -282,11 +282,13 @@ class DataView(AdminView):
         'train' : DataField,
         'test1' : DataField,
         'test2' : DataField,
+        'attach' : DataField,
     }
 
     form_args = {
         'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train.csv')},
         'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1.csv')},
+        'attach' : {'label' : 'Attachment File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'attach.csv')},
         'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2.csv')},
         'owner': {'query_factory': _query_factory_owner},
     }
@@ -312,6 +314,8 @@ class DataView(AdminView):
             filename = 'data/' + model.name + "_test1"
         elif name == 'test2':
             filename = 'secret/' + model.name + "_test2"
+        elif name == 'attach':
+            filename = 'data/' + model.name + "_attach"
 
         return Markup('<a href=/download/%s> download </a>' % (filename))
 
@@ -319,6 +323,7 @@ class DataView(AdminView):
         'train': _list_download_link,
         'test1': _list_download_link,
         'test2': _list_download_link,
+        'attach':_list_download_link,
     }
 _admin.add_view(DataView(Data, db.session, name="数据集管理"))
 

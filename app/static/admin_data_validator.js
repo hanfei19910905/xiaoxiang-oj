@@ -56,6 +56,15 @@ $(document).ready(function() {
                     }
                 }
             },
+            attach: {
+                message: 'The attach file is not valid',
+                validators: {
+                    file: {
+                        extension: 'zip',
+                        message: 'You can only upload zip file.'
+                    },
+                }
+            },
         }
     });
 });

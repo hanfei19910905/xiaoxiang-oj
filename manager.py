@@ -23,7 +23,7 @@ def init_db():
     db.session.commit()
     auc = models.JudgeNorm(name='auc', code='judge/auc_judge.py', owner_id=admin_inst.id)
     f1 = models.JudgeNorm(name='f1score', code='judge/f1score_judge.py', owner_id=admin_inst.id)
-    rmse = models.JudgeNorm(name='rmse', code='judge/rmse_judge.py', owner_id=admin_inst.id)
+    rmse = models.JudgeNorm(name='rmse', code='judge/rmse_judge.py', owner_id=admin_inst.id, desc=True)
     db.session.add(f1)
     db.session.add(auc)
     db.session.add(rmse)
