@@ -1,8 +1,7 @@
 from .. import db
 from sqlalchemy import *
 from flask_login import UserMixin
-#from hashlib import md5
-#from werkzeug.security import check_password_hash
+from hashlib import md5
 
 camp_user = db.Table('camp_user',
     db.Column('user_id', Integer, db.ForeignKey('user.id')),
@@ -19,12 +18,16 @@ class Role(db.Model):
         return self.name
 
 
+def hashPwd(pwd, salt='salt'):
+    return md5((str(md5(pwd.encode(encoding='ascii')).hexdigest()) + salt).encode(encoding='ascii')).hexdigest()
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user' 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(50),nullable=False)
-    password = db.Column(db.String(20),nullable=False)
+    password = db.Column(db.String(100),nullable=False)
     salt = db.Column(db.String(200),nullable=False, default='salt')
     camp = db.relationship("TrainCamp", secondary=camp_user)
     role_id = db.Column(db.ForeignKey("role.id"), nullable=False)
@@ -32,7 +35,7 @@ class User(UserMixin, db.Model):
     sub_id = db.Column(db.Integer, default=-1)
 
     def verify_password(self, password):
-        return self.password == password
+        return self.password == hashPwd(password, self.salt)
 
     @property
     def is_admin(self):

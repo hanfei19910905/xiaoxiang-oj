@@ -18,7 +18,7 @@ def init_db():
     admin = models.Role(name='admin')
     db.session.add(admin)
     db.session.commit()
-    admin_inst = models.User(email='admin@admin.com', name='admin', role_id=admin.id, password='123456')
+    admin_inst = models.User(email='admin@admin.com', name='admin', role_id=admin.id, password=models.hashPwd('123456'))
     db.session.add(admin_inst)
     db.session.commit()
     auc = models.JudgeNorm(name='auc', code='judge/auc_judge.py', owner_id=admin_inst.id)
@@ -37,10 +37,26 @@ def init_db():
     db.session.add(cid)
     db.session.commit()
 
+#@manager.command
+#def sandbox_service(ch):
+#    print("Arg ch",ch)
+#    SandBoxService.run(ch)
+
 @manager.command
-def sandbox_service(ch):
-    print("Arg ch",ch)
-    SandBoxService.run(ch)
+def load_data(file):
+    fd = open(file, 'r')
+    print('begin load file', file)
+    for i, row in enumerate(fd):
+        if i == 0:
+            continue
+        li = row.split(',')
+        name,password,salt,email = li[0], li[1], li[2], li[3]
+        if email[-1] == '\n':
+            email = email[:-1]
+        user = models.User(email = email, name = name, password = password, salt = salt, role_id=1)
+        db.session.add(user)
+        db.session.commit()
+    print('load successful')
 
 if __name__ == '__main__':
 
