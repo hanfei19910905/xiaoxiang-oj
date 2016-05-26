@@ -25,6 +25,7 @@ class AdminView(ModelView):
 
 
 class UserView(ModelView):
+    column_filters = ['name', 'email']
     def is_accessible(self):
         if AdminView.is_accessible(self) and current_user.is_admin:
             return True
@@ -171,17 +172,6 @@ def del_path(mapper, conn, target):
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train.csv' % target.name))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1.csv' % target.name))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2.csv' % target.name))
-        except OSError:
-            # Don't care if was not deleted because it does not exist
-            pass
-
-
-@listens_for(Submission, 'after_delete')
-def del_path(mapper, conn, target):
-    if target.id:
-        try:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'submission/%s/source' % target.id))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'submission/%s/result' % target.id))
         except OSError:
             # Don't care if was not deleted because it does not exist
             pass

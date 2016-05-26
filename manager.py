@@ -9,7 +9,7 @@ manager = Manager(app)
 @manager.command
 def init_db():
     "Initial Database"
-    #db.drop_all()
+    db.drop_all()
     db.create_all()
     student = models.Role(name='student')
     db.session.add(student)
@@ -42,18 +42,22 @@ def init_db():
 #    print("Arg ch",ch)
 #    SandBoxService.run(ch)
 
+def process(str):
+    if str[0] == '\"' and str[-1] == '\"':
+        return str[1:-1]
+    return str
+
+
 @manager.command
 def load_data(file):
     fd = open(file, 'r')
     print('begin load file', file)
     for i, row in enumerate(fd):
-        if i == 0:
-            continue
         li = row.split(',')
         name,password,salt,email = li[0], li[1], li[2], li[3]
         if email[-1] == '\n':
             email = email[:-1]
-        user = models.User(email = email, name = name, password = password, salt = salt, role_id=1)
+        user = models.User(email = process(email), name = process(name), password = process(password), salt = process(salt), role_id=1)
         db.session.add(user)
         db.session.commit()
     print('load successful')
