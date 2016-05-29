@@ -9,7 +9,13 @@ import os
 @download.route('/data/<filename>')
 @login_required
 def download_data(filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + '.csv' )
+    if filename [-6:] == "attach":
+        name = "attach.zip"
+    elif filename [-5:] == "train":
+        name = "train.csv"
+    else:
+        name = "test1.csv"
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + '.csv' , as_attachment = True, attachment_filename =name)
 
 
 @download.route('/secret/<filename>')

@@ -6,6 +6,7 @@ import config
 
 manager = Manager(app)
 
+
 @manager.command
 def init_db():
     "Initial Database"
