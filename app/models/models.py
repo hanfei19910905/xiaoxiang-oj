@@ -84,11 +84,11 @@ class Data(db.Model):
 class TrainCamp(db.Model):
     __tablename__ = 'traincamp'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    public = db.Column(db.Boolean, default = True)
     name = db.Column(db.String(200), unique=True,nullable=False)
     begin_time = db.Column(db.DateTime,nullable=False)
     end_time = db.Column(db.DateTime,nullable=False)
     user = db.relationship(User, secondary=camp_user)
-    public = db.Column(db.Boolean, default = True)
 
     def __str__(self):
         return self.name
