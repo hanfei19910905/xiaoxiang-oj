@@ -65,17 +65,18 @@ def code_show(sid):
             return render_template('code_view.html', code_list = [['source.py', '0', content]], user = sub.user, prob = sub.prob)
         else:
             print('second')
-            for parent, dir, filenames in os.walk(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, 'problem')):
+            for parent, dir, filenames in os.walk(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid)):
                 print('parent', parent)
+                print('dir', dir)
                 for filename in filenames:
                     print('filename: ', filename)
                     if filename[-3:] == '.py':
-                        path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid, 'problem', filename)
+                        path = os.path.join(parent, filename)
+                        print('path: ', path)
                         fd = open(path, 'r')
                         content = fd.read()
                         id+=1
                         p_list.append([filename, str(id), content])
-                break
             return render_template('code_view.html', code_list = p_list, user = sub.user, prob = sub.prob)
     flash('没有找到这个提交!')
     return redirect("/admin/submission/")

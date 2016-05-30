@@ -125,7 +125,7 @@ def prob_view(hid, pid):
                         value.save(os.path.join(submission_path, value.filename))
                         cmd= "unzip %s -d %s" % (os.path.join(submission_path, value.filename), submission_path)
                         ret = os.system(cmd)
-                        if ret != 0 or not os.path.exists(os.path.join(submission_path, 'problem')):
+                        if ret != 0:
                             flash('unzip failed!'  + cmd)
                             db.session.delete(sub)
                             db.session.commit()
@@ -197,7 +197,7 @@ def prob_view_get(hid, pid):
                 source.save(os.path.join(submission_path, source.filename))
                 cmd= "unzip %s -d %s" % (os.path.join(submission_path, source.filename), submission_path)
                 ret = os.system(cmd)
-                if ret != 0 or not os.path.exists(os.path.join(submission_path, 'problem')):
+                if ret != 0:
                     flash('unzip failed!'  + cmd)
                     db.session.delete(sub)
                     db.session.commit()
