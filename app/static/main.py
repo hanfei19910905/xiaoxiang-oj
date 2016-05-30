@@ -11,9 +11,14 @@ def gen_data(data_fd):
     data, ids = [], []
     first = True
     id_idx, target_idx = -1, -1
+    di = ','
     for j, f in enumerate(data_fd):
         if first :
-            li = f.split(',')
+            if f.find(',') != -1:
+                li = f.split(',')
+            else:
+                li = f.split('\t')
+                di = '\t'
             for i, st in enumerate(li):
                 if st.lower() == 'id':
                     id_idx = i
@@ -21,7 +26,7 @@ def gen_data(data_fd):
                     target_idx = i
             first = False
             continue
-        li = f.split(',')
+        li = f.split(di)
         if len(li) < 1:
             print('at least one column in csv file.')
             exit(0)

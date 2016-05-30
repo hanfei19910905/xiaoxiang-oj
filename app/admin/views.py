@@ -364,12 +364,12 @@ class IndexSetView(AdminView):
             traincamp = form.traincamp
 
             li = IndexSet.query.all()
-            li[0].set_id  = problem.id
-            li[1].set_id  = homework.id
-            li[2].set_id  = traincamp.id
+            li[0].set_id  = problem.data.id
+            li[1].set_id  = homework.data.id
+            li[2].set_id  = traincamp.data.id
             db.session.commit()
             flash('更新成功！')
-            return redirect('/admin')
+            return redirect('/admin/indexset')
 
         return self.render('admin/index_set.html', form=form)
 

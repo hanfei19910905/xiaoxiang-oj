@@ -41,10 +41,7 @@ def logout():
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
     id_li = IndexSet.query.all()
-    ppp = db.session.query(homework_prob).filter(homework_prob.c.problem_id==id_li[0].set_id).first()
-    if ppp is None:
-        return render_template('ranklist.html')
-    pid = ppp.problem_id
+    pid = id_li[0].set_id
     sub_list = ProbUserStatic.query.filter_by(prob_id = pid).all()
     if len(sub_list) <= 0:
         return render_template('ranklist.html')
@@ -79,11 +76,13 @@ def get_rank(rname=None):
             crank[uname] = dict()
             for c in clist:
                 crank[uname][c.id] = 0.0
+        hkey = sub[2]
         hrank[uname][sub[2]] += float(sub[0])
         home = HomeWork.query.filter_by(id = sub.h_id).one()
+        ckey = home.camp_id
         crank[uname][home.camp_id] += float(sub[0])
-    hrlist = sorted(hrank.items(), key=lambda d:d[1]['total'], reverse=True)
-    crlist = sorted(crank.items(), key=lambda d:d[1]['total'], reverse=True)
+    hrlist = sorted(hrank.items(),key= lambda d:d[1][hkey], reverse=True)
+    crlist = sorted(crank.items(),key= lambda d:d[1][ckey], reverse=True)
     if rname == 'prob':
         res = prlist
         rlist = plist
