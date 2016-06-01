@@ -59,6 +59,6 @@ def check(ids1, ids2):
 check(_ids1,_ids2)
 
 try:
-    print judge.evaluate(_ids1, _result, _data)
+    print judge.evaluate(_ids1, _data, _result)
 except Exception as e:
     print e

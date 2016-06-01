@@ -24,6 +24,6 @@ def evaluate(ids,true_values,predict_values):
 	labels = []
 	predicted_ctr = []
 	for i in range(len(ids)):
-		labels.append(int(true_values[i]))
+		labels.append(float(true_values[i]))
 		predicted_ctr.append(float(predict_values[i]))
 	return auc(labels,predicted_ctr)

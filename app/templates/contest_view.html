@@ -5,14 +5,16 @@
 </div>
 <div class="page-content">
     {% if plist %}
-    <table class="table table-striped">
+    <table class="table table-striped table-hover">
         <thead>
             <th>Problem Name</th>
+            <th>Author</th>
         </thead>
         <tbody>
             {% for problem in (plist) %}
             <tr>
                 <td><a href="{{url_for('prob.prob_view', hid = homework.id, pid = problem.id)}}">{{ problem.name }}</a></td>
+                <td>{{ problem.author.name  }}</td>
             </tr>
             {% endfor %}
         </tbody>
