@@ -4,7 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from sqlalchemy.event import listens_for
 from flask_admin import form, expose
-from wtforms import ValidationError
+from wtforms import ValidationError, StringField
 from werkzeug.utils import secure_filename
 from jinja2 import Markup
 from ..models import *
@@ -24,8 +24,19 @@ class AdminView(ModelView):
         return redirect(url_for('main.login', next = request.url))
 
 
+class PwdField(StringField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = hashPwd(valuelist[0])
+        else:
+            self.data = hashPwd("")
+
+
 class UserView(ModelView):
     column_filters = ['name', 'email']
+    form_overrides = {
+        'password' : PwdField,
+    }
     def is_accessible(self):
         if AdminView.is_accessible(self) and current_user.is_admin:
             return True
