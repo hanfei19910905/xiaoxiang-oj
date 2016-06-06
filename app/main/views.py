@@ -41,58 +41,30 @@ def logout():
 @main.route('/rank/<rname>', methods=['GET', 'POST'])
 def get_rank(rname=None):
     id_li = IndexSet.query.all()
-    pid = id_li[0].set_id
-    sub_list = ProbUserStatic.query.filter_by(prob_id = pid).all()
-    if len(sub_list) <= 0:
-        return render_template('ranklist.html')
-    prob = Problem.query.filter_by(id = pid).first()
-    plist = [prob]
-    prank = dict()
-    for sub in sub_list:
-        uname = User.query.filter_by(id = sub.user_id).one().name
-        if uname not in prank:
-            prank[uname] = dict()
-            prank[uname][pid] = '没有得分'
-        prank[uname][sub.prob_id] = sub.score
-    prlist = sorted(prank.items(), key=lambda d:d[1][pid], reverse= not prob.judge.desc)
-    sub_list2 = db.session.query(func.max(Submission.score),
-        Submission.prob_id, Submission.h_id, Submission.user_id)\
-        .group_by(Submission.h_id, Submission.prob_id, Submission.user_id).all()
-    clist = TrainCamp.query.filter_by(id = id_li[2].set_id).all()
-    hlist = HomeWork.query.filter_by(id = id_li[1].set_id).all()
-    if len(sub_list2) <= 0:
-        return render_template('ranklist.html')
-    crank = dict()
-    hrank = dict()
-    for sub in sub_list2:
-        if sub.h_id is None:
-            continue
-        uname = User.query.filter_by(id=sub[3]).one().name
-        if uname not in hrank:
-            hrank[uname] = dict()
-            for h in hlist:
-                hrank[uname][h.id] = 0.0
-        if uname not in crank:
-            crank[uname] = dict()
-            for c in clist:
-                crank[uname][c.id] = 0.0
-        hkey = sub[2]
-        hrank[uname][sub[2]] += float(sub[0])
-        home = HomeWork.query.filter_by(id = sub.h_id).one()
-        ckey = home.camp_id
-        crank[uname][home.camp_id] += float(sub[0])
-    hrlist = sorted(hrank.items(),key= lambda d:d[1][hkey], reverse=True)
-    crlist = sorted(crank.items(),key= lambda d:d[1][ckey], reverse=True)
+
     if rname == 'prob':
-        res = prlist
-        rlist = plist
-    elif rname == 'home':
-        res = hrlist
-        rlist = hlist
+        prob_list = Problem.query.filter_by(id = id_li[0].set_id).all()
+        title_list = ['rank', 'user name', prob_list[0].name, 'last submit time']
+    if rname == 'home':
+        prob_list = Problem.query.filter(Problem.homework.any(id = id_li[1].set_id)).all()
+        title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time']
     else:
-        res = crlist
-        rlist = clist
-    return render_template('ranklist.html', prank=res, plist=rlist, type=rname)
+        prob_list = Problem.query.filter(Problem.homework.any(camp_id = id_li[2].set_id)).all()
+        print("prob_list!!",prob_list)
+        title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time']
+    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score)).filter(ProbUserStatic.prob_id.in_(tuple(map( lambda prob: prob.id, prob_list))), ProbUserStatic.score > 0)\
+        .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
+    if len(result) == 0:
+        return render_template('ranklist.html')
+    prank = []
+    for i, res in enumerate(result) :
+        sub = Submission.query.filter_by(id=res[0]).order_by(Submission.time.desc()).first()
+        print(sub.time)
+        if rname == 'prob':
+            prank.append([i + 1, sub.user.name, res[2], sub.time])
+        else:
+            prank.append([i + 1, sub.user.name, res[1], sub.time])
+    return render_template('ranklist.html', prank=prank, plist=title_list)
 
 
 @login_manager.user_loader

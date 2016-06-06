@@ -4,20 +4,16 @@
 {% if prank %}
     <table class="table table-striped tablesorter" id="{{type}}">
         <thead>
-            <th>User</th>
-            {% for prob in plist %}
-            <th>{{ prob.name }}</th>
+            {% for text in plist %}
+            <th>{{ text }}</th>
             {% endfor %}
 
         </thead>
         <tbody>
             {% for prk in prank %}
             <tr>
-                <td>{{ prk[0] }}</td>
-                {% for pid in prank[0][1]%}
-                {% if pid != 'total' %}
-                <td>{{ prk[1][pid] }}</td>
-                {% endif %}
+                {% for p in prk%}
+                <td>{{ p }}</td>
                 {% endfor %}
 
             </tr>

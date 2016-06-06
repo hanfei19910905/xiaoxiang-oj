@@ -26,12 +26,17 @@ class SandBoxService(object):
         if ret == 'success':
             print('score', score)
             submit.score = score
+            if submit.prob.judge.desc and score > 0 :
+                real_score = 1 / score
+            else :
+                real_score = score
             static = ProbUserStatic.query.filter_by(user_id = submit.user_id).filter_by(prob_id = submit.prob_id).first()
             if static is None:
-                static = ProbUserStatic(user_id = submit.user_id, prob_id = submit.prob_id, score = score)
+                static = ProbUserStatic(user_id = submit.user_id, prob_id = submit.prob_id, score = score, real_score = real_score)
                 db.session.add(static)
-            elif static.score < score:
+            elif static.real_score < real_score:
                 static.score = score
+                static.real_score = real_score
         db.session.commit()
 
     @staticmethod
