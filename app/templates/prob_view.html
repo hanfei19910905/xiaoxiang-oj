@@ -56,18 +56,16 @@
             </div>
             {% if not hid == -1 %}
             <div class="col-md-3" role="complementary">
-                <div class="row">
-                    <a class="btn btn-info" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
-                </div>
-                <div class="row">
-                    <a class="btn btn-info" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
-                </div>
-                <div class="row">
-                    <a class="btn btn-info" href="{{url_for('download.download_data', filename = data.name + '_attach')}}">下载附件</a>
+                {{ wtf.quick_form(form, id='fileupload') }}
+                <br />
                 <div id="progress">
                       <div class="bar" style="width: 0%;"> </div>
                 </div>
-                {{ wtf.quick_form(form, id='fileupload') }}
+                <p>
+                <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
+                <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
+                <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_attach')}}">下载附件</a>
+                </p>
             </div>
             {% endif %}
         </div>
