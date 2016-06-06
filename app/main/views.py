@@ -56,9 +56,10 @@ def get_rank(rname=None):
         .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
     if len(result) == 0:
         return render_template('ranklist.html')
+    result = reversed(result)
     prank = []
     for i, res in enumerate(result) :
-        sub = Submission.query.filter_by(id=res[0]).order_by(Submission.time.desc()).first()
+        sub = Submission.query.filter_by(user_id=res[0]).order_by(Submission.time.desc()).first()
         print(sub.time)
         if rname == 'prob':
             prank.append([i + 1, sub.user.name, res[2], sub.time])
