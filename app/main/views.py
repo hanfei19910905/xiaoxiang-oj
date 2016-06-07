@@ -45,7 +45,7 @@ def get_rank(rname=None):
     if rname == 'prob':
         prob_list = Problem.query.filter_by(id = id_li[0].set_id).all()
         title_list = ['rank', 'user name', prob_list[0].name, 'last submit time']
-    if rname == 'home':
+    elif rname == 'home':
         prob_list = Problem.query.filter(Problem.homework.any(id = id_li[1].set_id)).all()
         title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time']
     else:
