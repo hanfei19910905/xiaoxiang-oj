@@ -64,7 +64,7 @@ def get_rank(rname=None):
         if rname == 'prob':
             prank.append([i + 1, sub.user.name, res[2], sub.time])
         else:
-            prank.append([i + 1, sub.user.name, res[1], sub.time])
+            prank.append([i + 1, sub.user.name, round(res[1], 6), sub.time])
     return render_template('ranklist.html', prank=prank, plist=title_list)
 
 

@@ -77,7 +77,7 @@ def code_show(sid):
                         content = fd.read()
                         id+=1
                         p_list.append([filename, str(id), content])
-            return render_template('code_view.html', code_list = p_list, user = sub.user, prob = sub.prob)
+            return render_template('code_view.html', code_list = p_list, user = sub.user, prob = sub.prob, sid = sid)
     flash('没有找到这个提交!')
     return redirect("/admin/submission/")
 
