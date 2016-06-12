@@ -14,7 +14,7 @@
         {% else%}
         <li role="presentation">
         {% endif%}
-            <a href="#code_{{code[1]}}" aria-controls="code_{{code[1]}}" role="tab" data-toggle="tab">
+        <a href="#{{sid}}_code_{{code[1]}}" aria-controls="{{sid}}_code_{{code[1]}}" role="tab" data-toggle="tab">
             {{code[0]}}
             </a>
         </li>
@@ -22,10 +22,10 @@
     </ul>
     <div class="tab-content">
         {% for code in code_list %}
-        {% if code[1] is equalto '0'%}
-        <div role="tabpanel" class="tab-pane active" id="code_{{code[1]}}">
+        {% if code[1] is equalto '1'%}
+        <div role="tabpanel" class="tab-pane active" id="{{sid}}_code_{{code[1]}}">
             {% else%}
-        <div role="tabpanel" class="tab-pane" id="code_{{code[1]}}">
+            <div role="tabpanel" class="tab-pane" id="{{sid}}_code_{{code[1]}}">
             {% endif %}
             <pre class="prettyprint">{{code[2]}}</pre>
         </div>
