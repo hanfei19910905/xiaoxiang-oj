@@ -64,7 +64,9 @@
                 <p>
                 <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_train')}}">下载训练集</a>
                 <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_test1')}}">下载测试集</a>
+                {% if attach %}
                 <a class="btn btn-info btn-block" href="{{url_for('download.download_data', filename = data.name + '_attach')}}">下载附件</a>
+                {% endif %}
                 </p>
             </div>
             {% endif %}

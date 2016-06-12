@@ -170,55 +170,6 @@ def prob_view_get(hid, pid):
     if not ok:
         return result
     form = SubmitForm()
-    if form.validate_on_submit() and problem is not None and (homework is not None or hid == -1):
-        source = form.source.data
-        src_ext = source.filename.rsplit('.', 1)[-1]
-        result = form.result.data
-        res_ext = result.filename.rsplit('.', 1)[-1]
-        if hid != -1:
-            if homework.begin_time < datetime.datetime.now() < homework.end_time:
-                sub = Submission(user_id = current_user.id, h_id = hid, prob_id = pid, source = src_ext, result = res_ext, time = datetime.datetime.now(), status = 'pending')
-            else:
-                flash('the homework is out of date!')
-                return redirect(request.args.get('next') or url_for("main.index"))
-
-        else:
-            sub = Submission(user_id = current_user.id, prob_id = pid, source = src_ext, result = res_ext, time = datetime.datetime.now())
-
-        db.session.add(sub)
-        db.session.commit()
-        try:
-            submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id))
-            os.makedirs(submission_path)
-            print (submission_path)
-            if src_ext =='py':
-                source.save(os.path.join(submission_path, 'source.py'))
-            else:
-                source.save(os.path.join(submission_path, source.filename))
-                cmd= "unzip %s -d %s" % (os.path.join(submission_path, source.filename), submission_path)
-                ret = os.system(cmd)
-                if ret != 0:
-                    flash('unzip failed!'  + cmd)
-                    db.session.delete(sub)
-                    db.session.commit()
-                    return redirect(request.args.get('next') or url_for("main.index"))
-        except os.error:
-            flash('save source file failed! err is ', os.error.strerror)
-            db.session.delete(sub)
-            db.session.commit()
-            return redirect(request.args.get('next') or url_for("main.index"))
-
-        try:
-            result.save(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'))
-        except os.error:
-            flash('save result file failed!')
-            db.session.delete(sub)
-            db.session.commit()
-            return redirect(request.args.get('next') or url_for("main.index"))
-        async_call.delay(sub.id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(sub.id), 'result.csv'),
-                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
-                            os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
-        return redirect(url_for("prob.status"))
     prank = ProbUserStatic.query.filter_by(prob_id=pid).order_by(ProbUserStatic.score).all()
     if len(prank) <= 0:
         prlist = None
@@ -230,8 +181,9 @@ def prob_view_get(hid, pid):
         app.logger.info(len(prlist))
         prlist.sort(key=lambda item: item[1], reverse=not problem.judge.desc)
     if hid == -1:
-        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist)
-    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', prank=prlist)
+        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist, attach = False)
+    attach = os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], problem.data.attach))
+    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', prank=prlist, attach =attach)
 
 
 @prob.route('/status')
