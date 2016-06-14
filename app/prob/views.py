@@ -54,7 +54,8 @@ def prob_view(hid, pid):
         for _ in files.keys():
             key = _
         value = files[key] # this is a Werkzeug FileStorage object
-        app.logger.info("get!! filename: " + key + " current_user %d" % current_user.id)
+        print("get!! filename: " + key + " current_user %d" % current_user.id)
+        print(request.headers)
         if 'Content-Range' in request.headers:
             if key == 'result':
                 id = current_user.sub_id
@@ -63,7 +64,7 @@ def prob_view(hid, pid):
                     left, right_str = range_str.split('-')
                     right, all = right_str.split('/')
                     left, right, all = int(left), int(right), int(all)
-                    app.logger.info("range! %d %d %d subId: %d" % (left, right, all, id))
+                    print("range! %d %d %d subId: %d" % (left, right, all, id))
                     submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')
                     if left == 0: # clear path
                         try :
@@ -72,7 +73,8 @@ def prob_view(hid, pid):
                             pass
                     with open(submission_path, 'ab') as f:
                         f.write(value.stream.read())
-                    if left + 1 == all:
+                    if right + 1 == all:
+                        print('success', id)
                         flash("提交成功")
                         clear_env()
                         sub = Submission.query.filter_by(id = id).first()
@@ -80,7 +82,7 @@ def prob_view(hid, pid):
                             flash('unkown error!')
                             app.logger.error("so sad!!! unknown id!! %d", sub)
                             return redirect(request.args.get('next') or url_for("main.index"))
-                        problem = sub.problem
+                        problem = sub.prob
                         #todo: check if it is a zip file.
                         app.logger.info("call!! %s" % str(id))
                         async_call.delay(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
@@ -148,7 +150,7 @@ def prob_view(hid, pid):
                 sub = Submission.query.filter_by(id = id).first()
                 if sub is None:
                     app.logger.error("can't find sid")
-                    flash('unkown error!')
+                    flash('unknown error!')
                     return redirect(request.args.get('next') or url_for("main.index"))
                 problem = sub.prob
                 submission_path = os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv')

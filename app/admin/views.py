@@ -183,6 +183,7 @@ def del_path(mapper, conn, target):
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train.csv' % target.name))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1.csv' % target.name))
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2.csv' % target.name))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_attach.csv' % target.name))
         except OSError:
             # Don't care if was not deleted because it does not exist
             pass

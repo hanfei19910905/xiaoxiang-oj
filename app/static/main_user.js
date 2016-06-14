@@ -4,6 +4,7 @@ $(function () {
     $('#fileupload').fileupload({
         autoUpload: false,
         replaceFileInput: false,
+        maxChunkSize: 1024 * 1024 * 10,
         add : function(e, data) {
             console.log(data)
             file = data
@@ -23,17 +24,6 @@ $(function () {
         stop : function(e) {
             window.location.href = '/status'
         },
-//        chunkalways: function(e, opt) {
-              //console.log('chunkalways')
-//            console.log(opt.jqXHR)
-//            console.log(opt.result)
-//        },
-//        always: function(e, opt) {
-              //console.log('always')
-//            console.log(opt.jqXHR)
-//            console.log(opt.result)
-//        },
-
     })
     $("#submit").on('click', function (e) {
         e.preventDefault();

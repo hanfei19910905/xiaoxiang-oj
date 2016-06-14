@@ -2,7 +2,7 @@ from flask import send_from_directory, flash, render_template, redirect
 from flask_login import login_required, current_user
 from . import download
 from ..models import Submission, Problem
-from .. import app, admin_required
+from .. import app, admin_required, teacher_required
 import os
 
 
@@ -20,9 +20,9 @@ def download_data(filename):
 
 @download.route('/secret/<filename>')
 @login_required
-@admin_required
+@teacher_required
 def download_sec(filename):
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secret'), filename + '.csv')
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'secret'), filename + '.csv', as_attachment=True, attachment_filename = 'test2.csv')
 
 
 @download.route('/judge/<filename>')

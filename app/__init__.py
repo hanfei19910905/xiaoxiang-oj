@@ -30,6 +30,7 @@ celery.conf.update(app.config)
 
 platforms.C_FORCE_ROOT=True
 
+
 def admin_required(view_func):
     @wraps(view_func)
     def decorator(*args, **kwargs):
@@ -44,7 +45,7 @@ def admin_required(view_func):
 def teacher_required(view_func):
     @wraps(view_func)
     def decorator(*args, **kwargs):
-        if current_user.is_teacher:
+        if current_user.is_teacher or current_user.is_admin:
             return view_func(*args, **kwargs)
         else:
             flash("你没有权限进行这个操作！")
