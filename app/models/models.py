@@ -162,6 +162,8 @@ class ProbUserStatic(db.Model):
     prob_id = db.Column(db.ForeignKey('problem.id'))
     score = db.Column(db.Float, default = 0)
     real_score = db.Column(db.Float, default = 0)
+    last_time = db.Column(db.DateTime)
+    submit_times = db.Column(db.Integer)
 
 
 class IndexSet(db.Model):

@@ -44,27 +44,27 @@ def get_rank(rname=None):
 
     if rname == 'prob':
         prob_list = Problem.query.filter_by(id = id_li[0].set_id).all()
-        title_list = ['rank', 'user name', prob_list[0].name, 'last submit time']
+        title_list = ['rank', 'user name', prob_list[0].name, 'last submit time', 'submit_times']
     elif rname == 'home':
         prob_list = Problem.query.filter(Problem.homework.any(id = id_li[1].set_id)).all()
-        title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time']
+        title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
     else:
         prob_list = Problem.query.filter(Problem.homework.any(camp_id = id_li[2].set_id)).all()
         print("prob_list!!",prob_list)
-        title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time']
-    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score)).filter(ProbUserStatic.prob_id.in_(tuple(map( lambda prob: prob.id, prob_list))), ProbUserStatic.score > 0)\
+        title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
+    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score), func.max(ProbUserStatic.last_time), func.sum(ProbUserStatic.submit_times)).\
+        filter(ProbUserStatic.prob_id.in_(tuple(map( lambda prob: prob.id, prob_list))), ProbUserStatic.score > 0)\
         .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
     if len(result) == 0:
         return render_template('ranklist.html')
     result = reversed(result)
     prank = []
     for i, res in enumerate(result) :
-        sub = Submission.query.filter_by(user_id=res[0]).order_by(Submission.time.desc()).first()
-        print(sub.time)
+        name = User.query.filter_by(id=res[0]).first().name
         if rname == 'prob':
-            prank.append([i + 1, sub.user.name, res[2], sub.time])
+            prank.append([i + 1, name, res[2], res[3], res[4]])
         else:
-            prank.append([i + 1, sub.user.name, round(res[1], 6), sub.time])
+            prank.append([i + 1, name, round(res[1], 6), res[3], res[4]])
     return render_template('ranklist.html', prank=prank, plist=title_list)
 
 
