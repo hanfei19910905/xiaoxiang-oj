@@ -44,13 +44,18 @@ def get_rank(rname=None):
 
     if rname == 'prob':
         prob_list = Problem.query.filter_by(id = id_li[0].set_id).all()
+        if len(prob_list) == 0:
+            return render_template('ranklist.html')
         title_list = ['rank', 'user name', prob_list[0].name, 'last submit time', 'submit_times']
     elif rname == 'home':
         prob_list = Problem.query.filter(Problem.homework.any(id = id_li[1].set_id)).all()
+        if len(prob_list) == 0:
+            return render_template('ranklist.html')
         title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
     else:
         prob_list = Problem.query.filter(Problem.homework.any(camp_id = id_li[2].set_id)).all()
-        print("prob_list!!",prob_list)
+        if len(prob_list) == 0:
+            return render_template('ranklist.html')
         title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
     result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score), func.max(ProbUserStatic.last_time), func.sum(ProbUserStatic.submit_times)).\
         filter(ProbUserStatic.prob_id.in_(tuple(map( lambda prob: prob.id, prob_list))), ProbUserStatic.score > 0)\
