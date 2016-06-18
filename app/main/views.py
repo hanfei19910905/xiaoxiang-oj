@@ -46,18 +46,18 @@ def get_rank(rname=None):
         prob_list = Problem.query.filter_by(id = id_li[0].set_id).all()
         if len(prob_list) == 0:
             return render_template('ranklist.html')
-        title_list = ['rank', 'user name', prob_list[0].name, 'last submit time', 'submit_times']
+        title_list = ['rank', 'user name', prob_list[0].name, 'Entries', 'last submit time']
     elif rname == 'home':
         prob_list = Problem.query.filter(Problem.homework.any(id = id_li[1].set_id)).all()
         if len(prob_list) == 0:
             return render_template('ranklist.html')
-        title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
+        title_list = ['rank', 'user name', HomeWork.query.filter_by(id = id_li[1].set_id).first().name, 'Entries', 'last submit time']
     else:
         prob_list = Problem.query.filter(Problem.homework.any(camp_id = id_li[2].set_id)).all()
         if len(prob_list) == 0:
             return render_template('ranklist.html')
-        title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'last submit time', 'submit_times']
-    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score), func.max(ProbUserStatic.last_time), func.sum(ProbUserStatic.submit_times)).\
+        title_list = ['rank', 'user name', TrainCamp.query.filter_by(id = id_li[1].set_id).first().name, 'Entries', 'last submit time']
+    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score), func.sum(ProbUserStatic.submit_times), func.max(ProbUserStatic.last_time)).\
         filter(ProbUserStatic.prob_id.in_(tuple(map( lambda prob: prob.id, prob_list))), ProbUserStatic.score > 0)\
         .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
     if len(result) == 0:
