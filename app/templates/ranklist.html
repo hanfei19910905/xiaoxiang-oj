@@ -13,7 +13,11 @@
             {% for prk in prank %}
             <tr>
                 {% for p in prk%}
+                {% if loop.index == 3%}
+                <td><p style="color:blue"> {{ p }} </p></td>
+                {%else%}
                 <td>{{ p }}</td>
+                {% endif %}
                 {% endfor %}
 
             </tr>
