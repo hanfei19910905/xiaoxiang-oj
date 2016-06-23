@@ -12,7 +12,7 @@ from  sandbox import async_call
 
 @prob.route('/problem_set') 
 def prob_set():
-    plist = Problem.query.order_by(Problem.id).all()
+    plist = Problem.query.order_by(Problem.id.desc()).all()
     return render_template('prob_list.html', plist=plist, active='problem')
 
 
