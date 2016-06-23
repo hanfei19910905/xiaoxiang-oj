@@ -27,6 +27,8 @@ class AdminView(ModelView):
 class PwdField(StringField):
     def process_formdata(self, valuelist):
         if valuelist:
+            if self.data == valuelist[0]:
+                return
             self.data = hashPwd(valuelist[0])
         else:
             self.data = hashPwd("")
@@ -34,8 +36,18 @@ class PwdField(StringField):
 
 class UserView(ModelView):
     column_filters = ['name', 'email']
+    column_editable_list = ['role']
+    column_exclude_list = ['salt', 'sub_id']
     form_overrides = {
         'password' : PwdField,
+    }
+    form_widget_args = {
+        'salt' : {
+            'readonly' : True
+        },
+        'sub_id' : {
+            'readonly' : True
+        },
     }
     def is_accessible(self):
         if AdminView.is_accessible(self) and current_user.is_admin:
