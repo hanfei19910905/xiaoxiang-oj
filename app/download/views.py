@@ -62,7 +62,7 @@ def code_show(sid):
             fd = open(path, 'r')
             content = fd.read()
             content = content.strip(' \t')
-            return render_template('code_view.html', code_list = [['source.py', '0', content]], user = sub.user, prob = sub.prob)
+            return render_template('code_view.html', code_list = [['source.py', '1', content]], user = sub.user, prob = sub.prob, sid=sid)
         else:
             print('second')
             for parent, dir, filenames in os.walk(os.path.join(app.config['UPLOAD_FOLDER'], 'submission', sid)):
