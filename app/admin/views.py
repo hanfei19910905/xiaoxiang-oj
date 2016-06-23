@@ -54,6 +54,7 @@ def _validate(form, field):
 
 
 class TrainCampView(AdminView):
+    column_default_sort = ('id', True)
     form_args = {
         'begin_time':{'validators': [_validate]},
         'end_time':{'validators': [_validate]},
@@ -69,6 +70,7 @@ def _query_factory_owner():
 
 
 class HomeWorkView(AdminView):
+    column_default_sort = ('id', True)
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         id = request.args.getlist('id')[0]
@@ -142,6 +144,7 @@ _admin.add_view(JudgeView(JudgeNorm, db.session, name="指标管理"))
 
 
 class ProbView(AdminView):
+    column_default_sort = ('id', True)
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         id = request.args.getlist('id')[0]
