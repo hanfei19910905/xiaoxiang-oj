@@ -8,7 +8,7 @@ from wtforms import ValidationError, StringField
 from werkzeug.utils import secure_filename
 from jinja2 import Markup
 from ..models import *
-import functools, os
+import functools, os, random, string
 
 
 class AdminView(ModelView):
@@ -25,19 +25,26 @@ class AdminView(ModelView):
 
 
 class PwdField(StringField):
+    change = False
     def process_formdata(self, valuelist):
         if valuelist:
             if self.data == valuelist[0]:
                 return
-            self.data = hashPwd(valuelist[0])
+            self.change = True
+            self.data = valuelist[0]
         else:
-            self.data = hashPwd("")
+            self.data = ""
+
+    def populate_obj(self, obj, name):
+        if self.change:
+            setattr(obj, name, hashPwd(self.data, obj.salt))
 
 
 class UserView(ModelView):
     column_filters = ['name', 'email']
     column_editable_list = ['role']
     column_exclude_list = ['salt', 'sub_id']
+    form_columns = ['camp', 'name', 'email', 'salt', 'role', 'password']
     form_overrides = {
         'password' : PwdField,
     }
@@ -49,6 +56,12 @@ class UserView(ModelView):
             'readonly' : True
         },
     }
+    form_args = {
+        'salt': {
+            'default': lambda : ''.join(random.sample(string.ascii_lowercase,4))
+        },
+    }
+
     def is_accessible(self):
         if AdminView.is_accessible(self) and current_user.is_admin:
             return True

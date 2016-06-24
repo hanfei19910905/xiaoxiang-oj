@@ -28,7 +28,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(50),nullable=False)
     password = db.Column(db.String(100),nullable=False)
-    salt = db.Column(db.String(200),nullable=False, default='salt')
+    salt = db.Column(db.String(200),nullable=False)
     camp = db.relationship("TrainCamp", secondary=camp_user)
     role_id = db.Column(db.ForeignKey("role.id"), nullable=False)
     role = db.relationship(Role)
