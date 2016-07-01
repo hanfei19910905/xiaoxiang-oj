@@ -27,7 +27,7 @@
                 {% endif %}
                 <td>{{ submit.time }}</td>
                 <td><a data-toggle="modal" href="{{url_for('download.code_show', sid = submit.id)}}" data-target="#{{submit.id|string}}">查看代码</a></td>
-                <td>{{ submit.status }}</td>
+                <td id="status_{{submit.id}}">{{ submit.status }}</td>
                 <td>{{ submit.score }}</td>
             </tr>
             <div class="modal fade " id="{{submit.id|string}}" tabindex="-1" role="dialog" aria-labelledby="{{submit.id|string}}">
@@ -45,3 +45,8 @@
     {% endif %}
 </div>
 {% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static', filename='status.js')}}" type="text/javascript"></script>
+{% endblock%}

@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, jsonify
 from flask_login import login_user, login_required, logout_user
 from . import main
 from .. import db, login_manager
@@ -71,6 +71,16 @@ def get_rank(rname=None):
         else:
             prank.append([i + 1, name, round(res[1], 6), res[3], res[4]])
     return render_template('ranklist.html', prank=prank, plist=title_list)
+
+
+@main.route('/getstatus/<status_id>', methods=['GET'])
+def get_status(status_id):
+    print('status_id', status_id)
+    if -1 != status_id.find('status_'):
+        status_id = status_id[7:]
+    print('status_id', status_id)
+    sub = Submission.query.filter_by(id=status_id).first()
+    return jsonify({'status': sub.status})
 
 
 @login_manager.user_loader

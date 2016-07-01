@@ -90,6 +90,7 @@ class TrainCampView(AdminView):
             return True
         return False
 
+
 def _query_factory_owner():
     return User.query.filter_by(id = current_user.id).all()
 
