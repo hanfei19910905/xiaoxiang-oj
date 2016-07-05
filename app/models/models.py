@@ -53,7 +53,6 @@ class JudgeNorm(db.Model):
     __tablename__ = 'judgenorm'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200),nullable=False)
-    value = db.Column(db.Float)
     desc = db.Column(db.Boolean, default = False)
     code = db.Column(db.String(100),nullable=False)
     owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
