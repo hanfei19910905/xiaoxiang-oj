@@ -20,42 +20,42 @@ $(document).ready(function() {
                     }
                 }
             },
-            train: {
-                message: 'The train file is not valid',
-                validators: {
-                    file: {
-                        extension: 'csv',
-                        message: 'You can only upload csv file.'
-                    },
-                    notEmpty: {
-                        message: 'You should choose a csv file and upload.'
-                    }
-                }
-            },
-            test1: {
-                message: 'The test1 file is not valid',
-                validators: {
-                    file: {
-                        extension: 'csv',
-                        message: 'You can only upload csv file.'
-                    },
-                    notEmpty: {
-                        message: 'You should choose a csv file and upload.'
-                    }
-                }
-            },
-            test2: {
-                message: 'The test2 file is not valid',
-                validators: {
-                    file: {
-                        extension: 'csv',
-                        message: 'You can only upload csv file.'
-                    },
-                    notEmpty: {
-                        message: 'You should choose a csv file and upload.'
-                    }
-                }
-            },
+            //train: {
+            //    message: 'The train file is not valid',
+            //    validators: {
+            //        file: {
+            //            extension: 'csv',
+            //            message: 'You can only upload csv file.'
+            //        },
+            //        notEmpty: {
+            //            message: 'You should choose a csv file and upload.'
+            //        }
+            //    }
+            //},
+            //test1: {
+            //    message: 'The test1 file is not valid',
+            //    validators: {
+            //        file: {
+            //            extension: 'csv',
+            //            message: 'You can only upload csv file.'
+            //        },
+            //        notEmpty: {
+            //            message: 'You should choose a csv file and upload.'
+            //        }
+            //    }
+            //},
+            //test2: {
+            //    message: 'The test2 file is not valid',
+            //    validators: {
+            //        file: {
+            //            extension: 'csv',
+            //            message: 'You can only upload csv file.'
+            //        },
+            //        notEmpty: {
+            //            message: 'You should choose a csv file and upload.'
+            //        }
+            //    }
+            //},
             attach: {
                 message: 'The attach file is not valid',
                 validators: {
