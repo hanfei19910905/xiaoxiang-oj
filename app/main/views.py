@@ -5,6 +5,7 @@ from .. import db, login_manager
 from .forms import LoginForm
 from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, homework_prob, IndexSet
 from sqlalchemy import func
+import datetime
 
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -76,11 +77,11 @@ def get_rank(rname=None):
 @main.route('/getstatus/<status_id>', methods=['GET'])
 def get_status(status_id):
     print('status_id', status_id)
-    if -1 != status_id.find('status_'):
-        status_id = status_id[7:]
-    print('status_id', status_id)
     sub = Submission.query.filter_by(id=status_id).first()
-    return jsonify({'status': sub.status})
+    if (sub.status == 'pending' or sub.status == 'queueing...') and (datetime.datetime.now() - sub.time).total_seconds() > 5 * 60 :
+        sub.status = 'invalid'
+    db.session.commit()
+    return jsonify({'status': sub.status, 'score': sub.score})
 
 
 @login_manager.user_loader
