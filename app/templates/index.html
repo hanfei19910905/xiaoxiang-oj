@@ -16,15 +16,27 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
+        {% if set[0].set_id > 0 %}
         <li role="presentation" class="active"><a id="ptab" href="#problem" aria-controls="problem" role="tab" data-toggle="tab">题目</a></li>
+        {% endif %}
+        {% if set[1].set_id > 0 %}
         <li role="presentation"><a id="htab" href="#homework" aria-controls="profile" role="tab" data-toggle="tab">作业</a></li>
+        {% endif %}
+        {% if set[2].set_id > 0 %}
         <li role="presentation"><a id="ctab" href="#traincamp" aria-controls="messages" role="tab" data-toggle="tab">课程</a></li>
+        {% endif %}
     </ul>
     <!-- Tab panes -->
     <div class="tab-content">
+        {% if set[0].set_id > 0 %}
         <div role="tabpanel" class="tab-pane active" id="problem"></div>
+        {% endif %}
+        {% if set[1].set_id > 0 %}
         <div role="tabpanel" class="tab-pane" id="homework"></div>
+        {% endif %}
+        {% if set[2].set_id > 0 %}
         <div role="tabpanel" class="tab-pane" id="traincamp"></div>
+        {% endif %}
     </div>
 </div>
 
