@@ -1,11 +1,13 @@
+import datetime
+
 from flask import render_template, redirect, request, url_for, flash, jsonify
 from flask_login import login_user, login_required, logout_user
-from . import main
-from .. import db, login_manager
-from .forms import LoginForm
-from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, homework_prob, IndexSet
 from sqlalchemy import func
-import datetime
+
+from . import main
+from .forms import LoginForm
+from .. import db, login_manager
+from ..models import User, Submission, Problem, HomeWork, TrainCamp, ProbUserStatic, IndexSet
 
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -23,7 +25,7 @@ def login():
 
 @main.route('/index')
 def index():
-    return render_template('index.html', active='index')
+    return render_template('index.html', active='index', set=IndexSet.query.all())
 
 
 @main.route('/')
