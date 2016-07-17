@@ -31,24 +31,7 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="rank">
                             {% if prank %}
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>User</th>
-                                        <th>Score</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for p in prank %}
-                                    <tr>
-                                        <td>{{p[0].name}}</td>
-                                        <td>{{p[1]}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% else %}
-                            <p>还没有人提交哦~</p>
+                            {% include "ranklist.html" %}
                             {% endif %}
                         </div>
                     </div>

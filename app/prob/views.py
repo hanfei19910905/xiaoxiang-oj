@@ -8,7 +8,8 @@ from .forms import SubmitForm
 from ..models import Problem, Submission, User, ProbUserStatic
 from flask_login import login_required, current_user
 import datetime, os
-from  sandbox import async_call
+from sandbox import async_call
+from sqlalchemy import func
 
 @prob.route('/problem_set') 
 def prob_set():
@@ -172,20 +173,18 @@ def prob_view_get(hid, pid):
     if not ok:
         return result
     form = SubmitForm()
-    prank = ProbUserStatic.query.filter_by(prob_id=pid).order_by(ProbUserStatic.score).all()
-    if len(prank) <= 0:
-        prlist = None
-    else:
-        prlist = list()
-        for p in prank:
-            user = User.query.filter_by(id=p.user_id).one()
-            prlist.append((user, p.score))
-        app.logger.info(len(prlist))
-        prlist.sort(key=lambda item: item[1], reverse=not problem.judge.desc)
+    plist = ['rank', 'user name', problem.name, 'Entries', 'last submit time']
+    result = db.session.query(ProbUserStatic.user_id, func.sum(ProbUserStatic.real_score), func.max(ProbUserStatic.score), func.sum(ProbUserStatic.submit_times), func.max(ProbUserStatic.last_time)). \
+        filter(ProbUserStatic.prob_id == problem.id, ProbUserStatic.score > 0) \
+        .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
+    prank = []
+    for i, res in enumerate(result):
+        name = User.query.filter_by(id=res[0]).first().name
+        prank.append([i + 1, name, res[2], res[3], res[4]])
     if hid == -1:
-        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', prank=prlist, attach = False)
+        return render_template('prob_view.html', problem=problem, form=form, hid=-1, data=problem.data, active='problem', attach = False, plist = plist, prank = prank)
     attach = os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], problem.data.attach))
-    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', prank=prlist, attach =attach)
+    return render_template('prob_view.html', problem=problem, form=form, hid=hid, data=problem.data, active='homework', attach =attach, plist = plist, prank = prank)
 
 
 @prob.route('/status')

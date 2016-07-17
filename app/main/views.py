@@ -67,7 +67,7 @@ def get_rank(rname=None):
         return render_template('ranklist.html')
     result = reversed(result)
     prank = []
-    for i, res in enumerate(result) :
+    for i, res in enumerate(result):
         name = User.query.filter_by(id=res[0]).first().name
         if rname == 'prob':
             prank.append([i + 1, name, res[2], res[3], res[4]])
