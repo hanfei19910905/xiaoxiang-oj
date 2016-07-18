@@ -60,5 +60,6 @@ $(function () {
             r_f[i].submit()
         }
         $("#submit").unbind('click')
+        $("#submit").replaceWith("<button type='button' class='btn btn-primary' disabled='disabled'>Uploading</button>")
     });
 });
