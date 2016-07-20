@@ -1,14 +1,18 @@
-from .. import _admin, db, app
-from flask import redirect, url_for, request, flash, render_template
+import os
+import random
+import string
+
+from flask import redirect, url_for, request, flash
+from flask_admin import form, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
-from sqlalchemy.event import listens_for
-from flask_admin import form, expose
-from wtforms import ValidationError, StringField
-from werkzeug.utils import secure_filename
 from jinja2 import Markup
+from sqlalchemy.event import listens_for
+from werkzeug.utils import secure_filename
+from wtforms import ValidationError, StringField
+
+from .. import _admin, app
 from ..models import *
-import functools, os, random, string
 
 
 class SuffixProxy:
@@ -295,7 +299,7 @@ class DataView(AdminView):
                 prefix = 'secret/'
             else:
                 prefix = 'data/'
-            filename = prefix + name + "_" + key + suffix.name
+            filename = prefix + name + "_" + key + "." + suffix.name
             print (filename, value)
             with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'ab') as f:
                 f.seek(int(left))
