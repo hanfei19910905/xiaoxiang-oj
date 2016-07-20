@@ -1,7 +1,7 @@
 from flask import send_from_directory, flash, render_template, redirect
 from flask_login import login_required, current_user
 from . import download
-from ..models import Submission, Problem
+from ..models import Submission, Problem, Data
 from .. import app, admin_required, teacher_required
 import os
 
@@ -9,13 +9,11 @@ import os
 @download.route('/data/<filename>')
 @login_required
 def download_data(filename):
-    if filename [-6:] == "attach":
-        name = "attach.zip"
-    elif filename [-5:] == "train":
-        name = "train.csv"
-    else:
-        name = "test1.csv"
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + '.csv' , as_attachment = True, attachment_filename =name)
+    name, file = filename.rsplit('_', 2)
+    d = Data.query.filter_by(name=name).first()
+    suffix = getattr(d, file)
+    print(filename + suffix)
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + "." + suffix, as_attachment = True, attachment_filename =filename + "." + suffix)
 
 
 @download.route('/secret/<filename>')

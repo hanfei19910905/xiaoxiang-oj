@@ -11,6 +11,10 @@ from ..models import *
 import functools, os, random, string
 
 
+class SuffixProxy:
+    name = ""
+
+
 class AdminView(ModelView):
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
@@ -209,10 +213,10 @@ _admin.add_view(ProbView(Problem, db.session, name="题库"))
 def del_path(mapper, conn, target):
     if target.name:
         try:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train.csv' % target.name))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1.csv' % target.name))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2.csv' % target.name))
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_attach.csv' % target.name))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_train.%s' % (target.name, target.train[-3:])))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_test1.%s' % (target.name, target.test1[-3:])))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_test2.%s' % (target.name, target.test2[-3:])))
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_attach.%s' % (target.name, target.attach[-3:])))
         except OSError:
             # Don't care if was not deleted because it does not exist
             pass
@@ -224,12 +228,18 @@ class DataField(form.FileUploadField):
         setattr(obj, name, filename)
 
 
+suffix = SuffixProxy()
+
+
+def namegen(obj, _):
+    return suffix.name
+
+
 class DataView(AdminView):
     create_template = 'admin/data_create.html'
     can_edit = False
+    suffix = ""
 
-    def namegen(filename, obj, filedata):
-        return  obj.name + "_" + filename
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
@@ -242,19 +252,24 @@ class DataView(AdminView):
             return redirect('/admin')
         return AdminView.edit_view(self)
 
+    filename = ""
+
     @expose('/new/', methods=('GET', 'POST'))
     def create_view(self):
         if request.method == 'GET':
             return AdminView.create_view(self)
-        print('fuck!!')
         files = request.files
-        print(request.files)
         key = ""
         for _ in files.keys():
             key = _
         value = files[key] # this is a Werkzeug FileStorage object
         name = request.form['name']
-        print(name)
+        global suffix
+        suffix.name = 'csv'
+        print(name, value.filename[-3:])
+        if value.filename[-3:] == "zip":
+            suffix.name = 'zip'
+        print(suffix)
         if 'Content-Range' in request.headers:
             range_str = request.headers['Content-Range'].split(" ")[1]
             left, right_str = range_str.split('-')
@@ -271,16 +286,16 @@ class DataView(AdminView):
                     return ('', 400)
                 try:
                     if key == 'test2':
-                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.csv' % (name, key)))
+                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.%s' % (name, key, suffix.name)))
                     else:
-                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.csv' % (name, key)))
+                        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.%s' % (name, key, suffix.name)))
                 except OSError:
                     pass
             if key == 'test2':
                 prefix = 'secret/'
             else:
                 prefix = 'data/'
-            filename = prefix + name + "_" + key + ".csv"
+            filename = prefix + name + "_" + key + suffix.name
             print (filename, value)
             with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'ab') as f:
                 f.seek(int(left))
@@ -297,9 +312,9 @@ class DataView(AdminView):
                 flash(" 请重新命名！！")
                 return ('', 400)
             if key == 'test2':
-                path = os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.csv' % (name, key))
+                path = os.path.join(app.config['UPLOAD_FOLDER'], 'secret/%s_%s.%s' % (name, key, suffix.name))
             else:
-                path = os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.csv' % (name, key))
+                path = os.path.join(app.config['UPLOAD_FOLDER'], 'data/%s_%s.%s' % (name, key, suffix.name))
             try:
                 os.remove(path)
             except OSError:
@@ -317,10 +332,10 @@ class DataView(AdminView):
     }
 
     form_args = {
-        'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'train.csv')},
-        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'test1.csv')},
-        'attach' : {'label' : 'Attachment File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'data/', 'namegen' : functools.partial(namegen, 'attach.csv')},
-        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'relative_path' : 'secret/', 'namegen' : functools.partial(namegen, 'test2.csv')},
+        'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
+        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
+        'attach' : {'label' : 'Attachment File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
+        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
         'owner': {'query_factory': _query_factory_owner},
     }
 
@@ -337,7 +352,7 @@ class DataView(AdminView):
             return
         raise ValidationError("你没有这个权限删除这个数据集！")
 
-    def _list_download_link(view, context, model, name):
+    def _list_download_link (view, context, model, name):
         filename =''
         if name == 'train':
             filename = 'data/' + model.name + "_train"
