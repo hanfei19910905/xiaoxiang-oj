@@ -4,7 +4,7 @@ $(function () {
     $('#fileupload').fileupload({
         autoUpload: false,
         replaceFileInput: false,
-        maxChunkSize: 1024 * 1024 * 10,
+        maxChunkSize: 1024 * 1024 * 1,
         add : function(e, data) {
             file = data
             name = e.delegatedEvent.target.name
