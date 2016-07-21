@@ -1,3 +1,4 @@
+import functools
 import os
 import random
 import string
@@ -232,10 +233,15 @@ class DataField(form.FileUploadField):
         setattr(obj, name, filename)
 
 
-suffix = SuffixProxy()
+suffix_map = {
+    "train": SuffixProxy(),
+    "attach": SuffixProxy(),
+    "test1": SuffixProxy(),
+    "test2": SuffixProxy(),
+}
 
 
-def namegen(obj, _):
+def namegen(suffix, obj, _):
     return suffix.name
 
 
@@ -243,7 +249,11 @@ class DataView(AdminView):
     create_template = 'admin/data_create.html'
     can_edit = False
     suffix = ""
+    column_exclude_list = ["uploading"]
+    form_columns = ['owner', 'name', 'train', 'attach', 'test1', 'test2']
 
+    def get_query(self):
+        return Data.query.filter_by(uploading=False)
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
@@ -268,12 +278,13 @@ class DataView(AdminView):
             key = _
         value = files[key] # this is a Werkzeug FileStorage object
         name = request.form['name']
-        global suffix
+        global suffix_map
+        suffix = suffix_map[key]
         suffix.name = 'csv'
         print(name, value.filename[-3:])
         if value.filename[-3:] == "zip":
             suffix.name = 'zip'
-        print(suffix)
+        print('key!!!', key, suffix, request)
         if 'Content-Range' in request.headers:
             range_str = request.headers['Content-Range'].split(" ")[1]
             left, right_str = range_str.split('-')
@@ -300,12 +311,23 @@ class DataView(AdminView):
             else:
                 prefix = 'data/'
             filename = prefix + name + "_" + key + "." + suffix.name
-            print (filename, value)
             with open(os.path.join(app.config['UPLOAD_FOLDER'], filename), 'ab') as f:
                 f.seek(int(left))
                 f.write(value.stream.read())
+            d = Data.query.filter_by(name=name).first()
+            if d is not None:
+                setattr(d, key, suffix.name)
+                if right + 1 == all:
+                    d.uploading = False
+                else:
+                    d.uploading = True
+                db.session.commit()
             if right + 1 == all:
-                return AdminView.create_view(self)
+                response = AdminView.create_view(self)
+                d = Data.query.filter_by(name=name).first()
+                d.uploading = False
+                db.session.commit()
+                return response
             return ('', 200)
         else:
             # first time
@@ -324,7 +346,12 @@ class DataView(AdminView):
             except OSError:
                 # Don't care if was not deleted because it does not exist
                 pass
-
+            d = Data.query.filter_by(name=name).first()
+            if d is not None:
+                setattr(d, key, suffix.name)
+                if key == 'attach':
+                    d.uploading = False
+                db.session.commit()
             value.save(path)
             return AdminView.create_view(self)
 
@@ -336,10 +363,10 @@ class DataView(AdminView):
     }
 
     form_args = {
-        'train' : {'label' : 'Train File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
-        'test1' : {'label' : 'Test1 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
-        'attach' : {'label' : 'Attachment File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
-        'test2' : {'label' : 'Test2 File', 'base_path' : app.config['UPLOAD_FOLDER'], 'allow_overwrite' : false, 'namegen' : namegen},
+        'train': {'label': 'Train File', 'namegen': functools.partial(namegen, suffix_map['train'])},
+        'test1': {'label': 'Test1 File', 'namegen': functools.partial(namegen, suffix_map['test1'])},
+        'attach': {'label': 'Attachment File', 'namegen': functools.partial(namegen, suffix_map['attach'])},
+        'test2': {'label': 'Test2 File', 'namegen': functools.partial(namegen, suffix_map['test2'])},
         'owner': {'query_factory': _query_factory_owner},
     }
 
@@ -386,6 +413,7 @@ class SubView(AdminView):
     column_default_sort = ('id', True)
     column_filters = ['user.name', 'homework.name', 'prob.name', 'status']
     list_template = 'admin/myList.html'
+    column_exclude_list = ["result"]
 
     def get_query(self):
         if current_user.is_admin:

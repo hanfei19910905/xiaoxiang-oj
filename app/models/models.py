@@ -1,7 +1,9 @@
-from .. import db
-from sqlalchemy import *
-from flask_login import UserMixin
 from hashlib import md5
+
+from flask_login import UserMixin
+from sqlalchemy import *
+
+from .. import db
 
 camp_user = db.Table('camp_user',
     db.Column('user_id', Integer, db.ForeignKey('user.id')),
@@ -72,6 +74,7 @@ class Data(db.Model):
     test2 = db.Column(db.String(200))
     owner_id = db.Column(db.ForeignKey("user.id"), nullable=False)
     owner = db.relationship(User)
+    uploading = db.Column(db.Boolean, default=True)
 
     def __unicode__(self):
         return self.name
