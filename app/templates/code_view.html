@@ -7,6 +7,7 @@
     </center>
 </div>
 <div class="modal-body">
+    {% if code_list | length > 0 %}
     <ul class="nav nav-tabs" role="tablist">
         {% for code in code_list %}
         {% if code[1] is equalto '1'%}
@@ -31,4 +32,7 @@
         </div>
         {% endfor %}
     </div>
+        {% else %}
+        <h2>没有发现Python文件！</h2>
+        {% endif %}
 </div>
