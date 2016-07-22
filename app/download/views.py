@@ -1,9 +1,11 @@
+import os
+
 from flask import send_from_directory, flash, render_template, redirect
 from flask_login import login_required, current_user
+
 from . import download
-from ..models import Submission, Problem, Data
 from .. import app, admin_required, teacher_required
-import os
+from ..models import Submission, Problem, Data
 
 
 @download.route('/data/<filename>')
@@ -12,8 +14,9 @@ def download_data(filename):
     name, file = filename.rsplit('_', 2)
     d = Data.query.filter_by(name=name).first()
     suffix = getattr(d, file)
-    print(filename + suffix)
-    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + "." + suffix, as_attachment = True, attachment_filename =filename + "." + suffix)
+    print(filename + suffix[-3:])
+    return send_from_directory(os.path.join(app.config['UPLOAD_FOLDER'], 'data'), filename + "." + suffix[-3:],
+                               as_attachment=True, attachment_filename=filename + "." + suffix)
 
 
 @download.route('/secret/<filename>')
