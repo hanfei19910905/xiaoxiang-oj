@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import datetime
+import os
+
 from flask import render_template, redirect, url_for, flash, request
-from . import prob
-from .. import app, db
-from .forms import SubmitForm
-from ..models import Problem, Submission, User, ProbUserStatic
 from flask_login import login_required, current_user
-import datetime, os
-from sandbox import async_call
 from sqlalchemy import func
+
+from sandbox import async_call
+from . import prob
+from .forms import SubmitForm
+from .. import app, db
+from ..models import Problem, Submission, User, ProbUserStatic
+
 
 @prob.route('/problem_set') 
 def prob_set():
@@ -178,6 +182,7 @@ def prob_view_get(hid, pid):
         filter(ProbUserStatic.prob_id == problem.id, ProbUserStatic.score > 0) \
         .group_by(ProbUserStatic.user_id).order_by(func.sum(ProbUserStatic.real_score)).all()
     prank = []
+    result = reversed(result)
     for i, res in enumerate(result):
         name = User.query.filter_by(id=res[0]).first().name
         prank.append([i + 1, name, res[2], res[3], res[4]])
