@@ -15,7 +15,7 @@ from .. import app, db
 from ..models import Problem, Submission, User, ProbUserStatic
 
 
-@prob.route('/problem_set') 
+@prob.route('/problem_set')
 def prob_set():
     plist = Problem.query.order_by(Problem.id.desc()).all()
     return render_template('prob_list.html', plist=plist, active='problem')
@@ -91,8 +91,10 @@ def prob_view(hid, pid):
                         #todo: check if it is a zip file.
                         app.logger.info("call!! %s" % str(id))
                         async_call.delay(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
-                                            os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
-                                            os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
+                                         os.path.join(app.config['UPLOAD_FOLDER'],
+                                                      'secret/' + problem.data.name + '_test2.' + problem.data.test2[
+                                                                                                  -3:]),
+                                         os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
                         sub.status = 'queueing...'
                         db.session.commit()
                         return redirect(url_for('prob.status'))
@@ -162,8 +164,9 @@ def prob_view(hid, pid):
                 value.save(submission_path)
                 app.logger.info("call!! %s" % str(id))
                 async_call.delay(id, os.path.join(app.config['UPLOAD_FOLDER'], 'submission', str(id), 'result.csv'),
-                                    os.path.join(app.config['UPLOAD_FOLDER'], problem.data.test2),
-                                    os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
+                                 os.path.join(app.config['UPLOAD_FOLDER'],
+                                              'secret/' + problem.data.name + '_test2.' + problem.data.test2[-3:]),
+                                 os.path.join(app.config['UPLOAD_FOLDER'], problem.judge.code))
                 flash("提交成功")
                 clear_env()
                 return redirect(url_for('prob.status'))
